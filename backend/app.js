@@ -7,4 +7,9 @@ config({
   path:"./data/config.env",
 })
 
-export const app = express()
+export const app = express();
+
+
+import user from "./routes/user.js";
+
+app.use("/api", user);
