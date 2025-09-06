@@ -2,6 +2,7 @@ import { Image, TouchableOpacity, View, Text } from "react-native"
 import { NavigationProp } from "./SearchModal"
 import { colors } from "@/styles/styles"
 import { Button } from "react-native-paper"
+import { useRouter } from "expo-router"
 
 export type ProductCardProps = {
     stock: number,
@@ -10,13 +11,15 @@ export type ProductCardProps = {
     image: string,
     id: string,
     addToCardHandler: (id: string, stock: number) => void,
-    navigate: NavigationProp,
     index: number
 }
 
-export default function ProductCard({stock, name, price, image, id, addToCardHandler, navigate, index}: ProductCardProps){
+export default function ProductCard({stock, name, price, image, id, addToCardHandler, index}: ProductCardProps){
+
+    const router = useRouter();
+
     return(
-       <TouchableOpacity activeOpacity={1} onPress={()=> navigate.navigate("productdetails", {id})}>
+       <TouchableOpacity activeOpacity={1} onPress={()=> router.push(`/products/${id}`)}>
             <View style = {{
                 elevation: 5,
                 width: 220,

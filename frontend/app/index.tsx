@@ -76,8 +76,6 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState<ProductType[]>(productData);
 
-  const navigate = useNavigation<NavigationProp>();
-
   const categoryButtonHangler = (id: string) => {
     setCategory(id);
   };
@@ -172,7 +170,6 @@ export default function Home() {
                     image = {item.images[0]?.url}
                     addToCardHandler={addToCardHandler}
                     id = {item._id}
-                    navigate = {navigate}
                     index = {index}
                   />
                 ))}
