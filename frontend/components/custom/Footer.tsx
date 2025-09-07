@@ -1,15 +1,13 @@
 import { colors } from "@/styles/styles";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-paper";
-import { NavigationProp } from "./SearchModal";
 
 type FooterProps = {
   activeRoute?: string;
 };
 
 export default function Footer({ activeRoute = "home" }: FooterProps) {
-  const navigate = useNavigation<NavigationProp>();
 
   const isAuthenticated = false;
   const loading = false;
@@ -17,17 +15,17 @@ export default function Footer({ activeRoute = "home" }: FooterProps) {
   const navigationHandler = (key: number) => {
     switch (key) {
       case 0:
-        navigate.navigate("home");
+        router.push("/");
         break;
       case 1:
-        navigate.navigate("cart");
+        router.push("/cart");
         break;
       case 2:
-        if (isAuthenticated) navigate.navigate("profile");
-        else navigate.navigate("login");
+        if (isAuthenticated) router.push("/");
+        else router.push("/login");
         break;
       default:
-        navigate.navigate("home");
+        router.push("/");
         break;
     }
   };
@@ -93,7 +91,7 @@ export default function Footer({ activeRoute = "home" }: FooterProps) {
         >
           <Avatar.Icon
             {...avatarOption}
-            icon={activeRoute === "home" ? "home" : "home_outline"}
+            icon={activeRoute === "home" ? "home" : "home-outline"}
           />
         </TouchableOpacity>
       </View>

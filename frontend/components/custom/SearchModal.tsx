@@ -1,6 +1,5 @@
-import { ProductType } from "@/app";
 import { colors } from "@/styles/styles";
-import { RootStackParamList } from "@/types/types";
+import { ProductType, RootStackParamList } from "@/types/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Image } from "expo-image";
 import { useNavigation, useRouter } from "expo-router";

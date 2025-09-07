@@ -20,6 +20,33 @@ export const styles = StyleSheet.create({
   },
   inputsStyling: {
     height: 50,
+    marginVertical: 10,
     backgroundColor: colors.color2,
+  },
+  forgotPassword: {
+    color: colors.color2,
+    marginHorizontal: 20,
+    marginVertical: 10,
+    alignSelf: "flex-end",
+    fontWeight: "100"
+  },
+  btn: {
+    backgroundColor: colors.color1,
+    margin: 20,
+    padding: 6
+  },
+  or: {
+    alignSelf: "center",
+    fontSize: 20,
+    fontWeight: 200,
+    color: colors.color2,
+  },
+  link: {
+    alignSelf: "center",
+    color: colors.color2,
+    fontSize: 18,
+    textTransform: "uppercase",
+    marginVertical: 10,
+    marginHorizontal: 20
   }
 });

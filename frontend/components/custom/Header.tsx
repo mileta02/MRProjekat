@@ -2,18 +2,18 @@ import { colors } from "@/styles/styles";
 import { RootStackParamList } from "@/types/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { router } from "expo-router";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-paper";
 
 const Header = ({ back, emptyCart }: { back: boolean; emptyCart: boolean }) => {
-  
-  
-    const navigate =
+  const navigate =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute();
 
   const emptyCartHandler = () => {};
+
 
   return (
     <>
@@ -25,7 +25,7 @@ const Header = ({ back, emptyCart }: { back: boolean; emptyCart: boolean }) => {
           <Avatar.Icon
             icon={"arrow-left"}
             color={
-              route.name === "productdetails" ? colors.color2 : colors.color3
+              route.name.startsWith("products") ? colors.color2 : colors.color3
             }
             style={{ backgroundColor: colors.color4 }}
           />
@@ -33,12 +33,12 @@ const Header = ({ back, emptyCart }: { back: boolean; emptyCart: boolean }) => {
       )}
       <TouchableOpacity
         style={{ position: "absolute", right: 20, top: 40, zIndex: 10 }}
-        onPress={emptyCart ? emptyCartHandler : () => navigate.navigate("cart")}
+        onPress={emptyCart ? emptyCartHandler : () => router.push("/cart")}
       >
         <Avatar.Icon
           icon={emptyCart ? "delete-outline" : "cart-outline"}
           color={
-            route.name === "productdetails" ? colors.color2 : colors.color3
+            route.name.startsWith("products") ? colors.color2 : colors.color3
           }
           style={{ backgroundColor: colors.color4 }}
         />

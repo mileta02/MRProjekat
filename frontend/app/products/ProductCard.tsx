@@ -1,5 +1,5 @@
 import { Image, TouchableOpacity, View, Text } from "react-native"
-import { NavigationProp } from "./SearchModal"
+import { NavigationProp } from "../../components/custom/SearchModal"
 import { colors } from "@/styles/styles"
 import { Button } from "react-native-paper"
 import { useRouter } from "expo-router"
