@@ -1,5 +1,6 @@
 import { colors } from "@/styles/styles";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-paper";
 
@@ -13,6 +14,7 @@ type CartItemProps = {
   quantity: number;
   incrementHandler: (id: string, quantity: number, stock: number) => void;
   decrementHandler: (id: string, quantity: number, stock: number) => void;
+  handleNavigate: (id: string) => void;
 };
 
 export default function CartItem({
@@ -25,6 +27,7 @@ export default function CartItem({
   quantity,
   incrementHandler,
   decrementHandler,
+  handleNavigate
 }: CartItemProps) {
   return (
     <View
@@ -61,7 +64,7 @@ export default function CartItem({
           paddingHorizontal: 45,
         }}
       >
-        <Text numberOfLines={1} style={{ fontSize: 17 }}>
+        <Text numberOfLines={1} style={{ fontSize: 17 }} onPress={()=> handleNavigate(id)}>
           {name}
         </Text>
         <Text numberOfLines={1} style={{ fontSize: 17, fontWeight: "900" }}>
