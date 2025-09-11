@@ -1,5 +1,7 @@
 import { asyncErrorCatcher } from "../middlewares/errorMiddleware.js";
 import { User } from "../models/user.js";
+import { sendJsonToken } from "../utils/features.js";
+import { ErrorHandler } from "../utils/errorHandler.js";
 
 //Login
 export const login = asyncErrorCatcher(async (req, res, next) => {
@@ -14,16 +16,20 @@ export const login = asyncErrorCatcher(async (req, res, next) => {
     return next(new ErrorHandler("Incorrect password.", 400));
   }
 
-  res.status(200).json({
-    success: true,
-    message: "Login successfully.",
-  });
+  sendJsonToken(user, res, "Login successfully.", 200);
 });
 
 //Register
 export const register = asyncErrorCatcher(async (req, res, next) => {
   const { name, email, password, address, city, country, pinCode } = req.body;
-  await User.create({
+
+  let user = await User.findOne({ email });
+
+  if (user) {
+    return next(new ErrorHandler("User with this email already exists.", 400));
+  }
+
+  user = await User.create({
     name,
     email,
     password,
@@ -33,8 +39,11 @@ export const register = asyncErrorCatcher(async (req, res, next) => {
     pinCode,
   });
 
-  res.status(201).json({
-    success: true,
-    message: "Registered successfully.",
-  });
+  sendJsonToken(user, res, "Registered successfully.", 201);
 });
+
+
+export const getMyProfile = asyncErrorCatcher(async (req, res, next) => {
+  const user = req.user;
+  res.status(200).json({success: true, user});
+})
