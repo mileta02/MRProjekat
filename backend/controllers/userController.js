@@ -42,8 +42,22 @@ export const register = asyncErrorCatcher(async (req, res, next) => {
   sendJsonToken(user, res, "Registered successfully.", 201);
 });
 
-
+//GetLoggedUserProfile
 export const getMyProfile = asyncErrorCatcher(async (req, res, next) => {
   const user = req.user;
-  res.status(200).json({success: true, user});
+  res.status(200).json({ success: true, user });
+})
+
+//Logout
+export const logout = asyncErrorCatcher(async (req, res, next) => {
+  res.status(200).cookie("token", "",
+    {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      expires: new Date(0)
+    }).json({
+      success: true,
+      message: "Successfully logged out."
+    })
 })
