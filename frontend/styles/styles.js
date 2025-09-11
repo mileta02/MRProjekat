@@ -50,3 +50,39 @@ export const styles = StyleSheet.create({
     marginHorizontal: 20
   }
 });
+
+export const inputStyling = StyleSheet.create({
+  height: 50,
+  backgroundColor: colors.color2,
+  marginVertical: 10,
+  marginHorizontal: 20,
+});
+
+export const inputOptions = {
+  height: 50,
+  backgroundColor: colors.color2,
+  marginVertical: 10,
+  marginHorizontal: 20,
+  activeOutlineColor: colors.color1,
+  mode: "outlined"
+};
+
+export const localStyles = StyleSheet.create({
+  heading: {
+    fontSize: 25,
+    fontWeight: "500",
+    textAlign: "center",
+    backgroundColor: colors.color3,
+    color: colors.color2,
+    padding: 5,
+    borderRadius: 5,
+  },
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: colors.color3,
+    borderRadius: 5,
+    justifyContent: "center",
+    elevation: 10,
+  },
+});

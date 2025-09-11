@@ -21,6 +21,10 @@ export default function Cart() {
     }
   }
 
+  const handleNavigate = (id: string) => {
+    router.push(`/products/${id}`);
+  }
+
   return (
     <View
       style={{
@@ -58,6 +62,7 @@ export default function Cart() {
               quantity={item.quantity}
               incrementHandler = {incrementHandler}
               decrementHandler = {decrementHandler}
+              handleNavigate = {handleNavigate}
             />
           ))}
         </ScrollView>
