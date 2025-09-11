@@ -10,7 +10,7 @@ name:{
 email:{
   type:String,
   required:[true,"Email is required."],
-  unique:[true,"User with this email already exist."],
+  unique:[true,"User with this email already exists."],
   validate:validator.isEmail,
 },
 password:{

@@ -1,8 +1,10 @@
 import express from "express";
-import {config} from "dotenv"; 
+import { config } from "dotenv";
+import user from "./routes/user.js";
+import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 
 config({
-  path:"./data/config.env",
+  path: "./data/config.env",
 })
 export const app = express();
 
@@ -10,5 +12,7 @@ export const app = express();
 app.use(express.json());
 
 // Routes
-import user from "./routes/user.js";
 app.use("/api/user", user);
+
+//Error Middleware
+app.use(errorMiddleware);

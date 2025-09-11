@@ -1,31 +1,28 @@
+import { asyncErrorCatcher } from "../middlewares/errorMiddleware.js";
 import { User } from "../models/user.js";
 
-export const login = async (req, res, next) => {
+//Login
+export const login = asyncErrorCatcher(async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email }).select("+password");
-  if(user == null) {
-    return res.status(400).json({
-      success: false,
-      message: "User with this email doesn't exist.",
-    });
+  if (user == null) {
+    return next(new ErrorHandler("User with this email doesn't exist.", 400))
   }
+
   const isMatched = await user.comparePassword(password);
   if (!isMatched) {
-    return res.status(400).json({
-      success: false,
-      message: "Incorrect password.",
-    });
+    return next(new ErrorHandler("Incorrect password.", 400));
   }
 
   res.status(200).json({
     success: true,
     message: "Login successfully.",
   });
-};
+});
 
-export const register = async (req, res, next) => {
+//Register
+export const register = asyncErrorCatcher(async (req, res, next) => {
   const { name, email, password, address, city, country, pinCode } = req.body;
-
   await User.create({
     name,
     email,
@@ -40,4 +37,4 @@ export const register = async (req, res, next) => {
     success: true,
     message: "Registered successfully.",
   });
-};
+});
