@@ -1,4 +1,5 @@
 import Footer from "@/components/custom/Footer";
+import Header from "@/components/custom/Header";
 import { colors, inputOptions, styles } from "@/styles/styles";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -11,10 +12,9 @@ import {
 } from "react-native";
 import { Avatar, Button, TextInput } from "react-native-paper";
 
-export default function Signup() {
+export default function UpdateProfile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
@@ -23,7 +23,7 @@ export default function Signup() {
   const loading = false;
 
   const disableBtn =
-    !name || !email || !password || !address || !city || !country || !pinCode;
+    !name || !email || !address || !city || !country || !pinCode;
 
   const submitHandler = () => {
     router.push("/verify");
@@ -31,13 +31,16 @@ export default function Signup() {
 
   return (
     <>
+      <Header back={true} emptyCart={false} />
+
       <View style={{ ...styles.defaultStyle }}>
         <View
           style={{
             marginBottom: 20,
+            marginTop: 60,
           }}
         >
-          <Text style={localStyles.heading}>Sign Up</Text>
+          <Text style={localStyles.heading}>Edit Profile</Text>
         </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -50,14 +53,6 @@ export default function Signup() {
           contentContainerStyle={{ paddingBottom: 50 }}
         >
           <View style={{ justifyContent: "center" }}>
-            <Avatar.Image
-              style={{ alignSelf: "center", backgroundColor: colors.color1 }}
-              size={80}
-              source={require("../../assets/images/profile.png")}
-            />
-            <TouchableOpacity onPress={() => router.push("/camera")}>
-              <Button textColor={colors.color1}>Change Photo</Button>
-            </TouchableOpacity>
             <View style={{ justifyContent: "center" }}>
               <TextInput
                 style={{ ...inputOptions }}
@@ -72,14 +67,6 @@ export default function Signup() {
                 keyboardType="email-address"
                 value={email}
                 onChangeText={setEmail}
-              />
-
-              <TextInput
-                style={{ ...inputOptions }}
-                secureTextEntry={true}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
               />
 
               <TextInput
@@ -115,22 +102,14 @@ export default function Signup() {
                 style={styles.btn}
                 onPress={submitHandler}
               >
-                Sign Up
+                Update
               </Button>
 
               <Text style={styles.or}>OR</Text>
-
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => router.push("/login")}
-              >
-                <Text style={styles.link}>Log In</Text>
-              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
       </View>
-      <Footer activeRoute="/profile" />
     </>
   );
 }
