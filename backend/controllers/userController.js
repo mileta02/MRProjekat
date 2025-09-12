@@ -48,6 +48,41 @@ export const getMyProfile = asyncErrorCatcher(async (req, res, next) => {
   res.status(200).json({ success: true, user });
 })
 
+//UpdateProfile
+export const updateProfile = asyncErrorCatcher(async (req, res, next) => {
+  const user = req.user;
+  const { name, surname, email, address, city, country, pinCode } = req.body;
+
+  if (name) user.name = name;
+  if (surname) user.surname = surname;
+  if (email) user.email = email;
+  if (address) user.address = address;
+  if (city) user.city = city;
+  if (country) user.country = country;
+  if (pinCode) user.pinCode = pinCode;
+
+  await user.save();
+  res.status(200).json({ success: true, message: "Profile updated successfully." })
+})
+
+//ChangePassword
+export const changePassword = asyncErrorCatcher(async (req, res, next) => {
+  const user = await User.findById(req.user._id).select("+password");
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) {
+    return next(new ErrorHandler("Please enter old and new password.", 400));
+  }
+  const isMatched = await user.comparePassword(oldPassword);
+  if (!isMatched) {
+    return next(new ErrorHandler("Incorrect old password.", 400));
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  res.status(200).json({ success: true, message: "Password changed successfully." })
+})
+
 //Logout
 export const logout = asyncErrorCatcher(async (req, res, next) => {
   res.status(200).cookie("token", "",
