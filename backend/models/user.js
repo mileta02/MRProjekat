@@ -46,7 +46,7 @@ const schema = new mongoose.Schema({
     url: String
   },
   otp: Number,
-  otp_expire: Date
+  otpExpire: Date
 });
 
 // Kao neki pre-method, pozivace se svaki put pre cuvanja usera u bazu

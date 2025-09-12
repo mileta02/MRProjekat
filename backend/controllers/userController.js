@@ -1,6 +1,6 @@
 import { asyncErrorCatcher } from "../middlewares/errorMiddleware.js";
 import { User } from "../models/user.js";
-import { getDataUri, sendJsonToken } from "../utils/features.js";
+import { getDataUri, sendEmail, sendJsonToken } from "../utils/features.js";
 import { ErrorHandler } from "../utils/errorHandler.js";
 import cloudinary from "cloudinary";
 
@@ -109,6 +109,7 @@ export const logout = asyncErrorCatcher(async (req, res, next) => {
     })
 })
 
+//UpdateProfilePicture
 export const updateProfilePicture = asyncErrorCatcher(async (req, res, next) => {
   const user = req.user;
 
@@ -122,4 +123,57 @@ export const updateProfilePicture = asyncErrorCatcher(async (req, res, next) => 
   };
   await user.save();
   res.status(200).json({ success: true, message: "Profile picture updated successfully." });
+})
+
+//ResetPassword (forget & reset logic)
+export const forgetPassword = asyncErrorCatcher(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email })
+
+  if (!user) {
+    return next(new ErrorHandler("User with this email doesn't exist.", 404));
+  }
+
+  const otp = Math.floor(Math.random() * (999999 - 100000) + 100000);
+  const otpExpire = 15 * 60 * 1000;
+
+  user.otp = otp;
+  user.otpExpire = new Date(Date.now() + otpExpire);
+console.log("Now:", Date.now());
+console.log("User otpExpire:", user.otpExpire.getTime());
+  await user.save();
+  try {
+    await sendEmail("Password reset", user.email, `Your reset password code is: ${otp}.`);
+  } catch (error) {
+    user.otp = null;
+    user.otpExpire = null;
+    await user.save();
+    return next(error);
+  }
+  res.status(200).json({ success: true, message: "Email successfully sent, please check your inbox." });
+})
+
+export const resetPassword = asyncErrorCatcher(async (req, res, next) => {
+  const { otp, password } = req.body || {};
+  if (!otp || !password) {
+    return next(new ErrorHandler("Please enter otp and new password.", 400));
+  }
+  const user = await User.findOne({
+    otp,
+    otpExpire: {
+      $gt: Date.now()
+    }
+  })
+
+  if (!user) {
+    return next(new ErrorHandler("Incorrect or expired otp.", 400));
+  }
+
+  user.password = password;
+  user.otp = null;
+  user.otpExpire = null;
+
+  await user.save();
+
+  res.status(200).json({ success: true, message: "Successfully reseted password, please log in." });
 })
