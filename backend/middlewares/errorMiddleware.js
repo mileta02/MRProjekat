@@ -1,4 +1,6 @@
 export const errorMiddleware = (err, req, res, next) => {
+    console.log(">>> error caught:", err);
+
     err.message = err.message || "Server error";
     err.statusCode = err.statusCode || 500;
 
