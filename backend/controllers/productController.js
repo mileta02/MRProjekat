@@ -5,7 +5,20 @@ import { getDataUri } from "../utils/features.js";
 import cloudinary from "cloudinary";
 
 export const getAllProducts = asyncErrorCatcher(async (req, res, next) => {
-    const products = await Product.find({});
+    const { keyword, category } = req.query || {};
+
+    const filter = {};
+    if (keyword) {
+        filter.name = {
+            $regex: keyword,
+            $options: "i"
+        };
+    }
+    if (category) {
+        filter.category = category;
+    }
+
+    const products = await Product.find(filter);
 
     res.status(200).json({
         success: true,
