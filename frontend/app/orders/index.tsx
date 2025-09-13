@@ -5,10 +5,7 @@ import { colors, localStyles, styles } from "@/styles/styles";
 import { ScrollView, Text, View } from "react-native";
 import { Headline } from "react-native-paper";
 
-export default function Orders() {
-  const handler = () => {};
-  const loading = false;
-  const orders = [
+export const orders = [
     {
       _id: "Sample",
       shippingInfo: {
@@ -49,6 +46,11 @@ export default function Orders() {
       totalAmount: 2000,
     },
   ];
+
+export default function Orders() {
+  const handler = () => {};
+  const loading = false;
+  
 
   return (
     <>
