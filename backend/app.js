@@ -2,6 +2,7 @@ import express from "express";
 import { config } from "dotenv";
 import user from "./routes/user.js";
 import product from "./routes/product.js";
+import order from "./routes/order.js"
 import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/user", user);
 app.use("/api/product", product);
+app.use("/api/order", order);
 
 //Error Middleware
 app.use(errorMiddleware);
