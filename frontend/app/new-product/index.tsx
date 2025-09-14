@@ -8,15 +8,15 @@ import {
   localStyles,
   styles,
 } from "@/styles/styles";
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar, Button, TextInput } from "react-native-paper";
 
 export default function NewProduct() {
   const loading = false;
   const id: string = "";
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<string>("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -39,8 +39,14 @@ export default function NewProduct() {
   ]);
   const [visible, setVisible] = useState(false);
 
+  const { imageParam } = useLocalSearchParams();
+
   const loadingOther = false;
   const submitHandler = () => {};
+
+  useEffect(() => {
+    if (imageParam) setImage(imageParam as string);
+  }, [imageParam]);
 
   return (
     <>
@@ -79,26 +85,37 @@ export default function NewProduct() {
                   marginBottom: 20,
                 }}
               >
-                <Avatar.Image
-                  size={80}
-                  style={{
-                    backgroundColor: colors.color1,
-                  }}
-                  source={{
-                    uri: image ? image : "",
-                  }}
-                />
+                {image ? (
+                  <Avatar.Image
+                    size={80}
+                    style={{ backgroundColor: colors.color1 }}
+                    source={{ uri: image }}
+                  />
+                ) : (
+                  <Avatar.Icon
+                    icon="image"
+                    size={80}
+                    style={{ backgroundColor: colors.color2 }}
+                  />
+                )}
                 <TouchableOpacity
-                  onPress={() => router.push(`/camera?newProduct=${true}`)}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/camera",
+                      params: {
+                        alias: "newProduct",
+                      },
+                    })
+                  }
                 >
                   <Avatar.Icon
                     icon={"camera"}
                     size={30}
                     color={colors.color3}
                     style={{
-                        backgroundColor: colors.color2,
-                        position: "absolute",
-                        bottom: 0,
+                      backgroundColor: colors.color2,
+                      position: "absolute",
+                      bottom: 0,
                     }}
                   />
                 </TouchableOpacity>
@@ -154,10 +171,10 @@ export default function NewProduct() {
                   padding: 6,
                 }}
                 onPress={() => submitHandler}
-                loading={loadingOther}
-                disabled={loadingOther}
+                loading={loading}
+                disabled={loading}
               >
-                Update
+                Create
               </Button>
             </View>
           </ScrollView>
