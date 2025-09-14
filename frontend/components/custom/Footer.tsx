@@ -54,7 +54,7 @@ export default function Footer({ activeRoute = "home" }: FooterProps) {
         >
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => navigationHandler(1)}
+            onPress={() => navigationHandler(2)}
           >
             <Avatar.Icon
               {...avatarOption}
