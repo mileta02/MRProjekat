@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Avatar, Button, TextInput } from "react-native-paper";
 
-export default function ForgotPassword() {
+export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

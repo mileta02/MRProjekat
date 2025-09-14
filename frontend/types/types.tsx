@@ -17,6 +17,7 @@ export type ProductType = {
   price: number;
   description: string;
   stock: number;
+  category: string;
 };
 
 export const productData: ProductType[] = [
@@ -32,6 +33,7 @@ export const productData: ProductType[] = [
     description:
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
     stock: 4,
+    category: "Cat1"
   },
   {
     price: 500,
@@ -46,5 +48,6 @@ export const productData: ProductType[] = [
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
 
     stock: 3,
+    category: "Cat2"
   },
 ];
