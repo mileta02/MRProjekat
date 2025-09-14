@@ -10,6 +10,9 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import { Provider } from "react-redux";
+import { store } from "@/redux/store";
+
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -23,11 +26,15 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Slot/>
-        <Toast position="top" topOffset={20}/>
-      </ThemeProvider>
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Slot />
+          <Toast position="top" topOffset={20} />
+        </ThemeProvider>
+      </SafeAreaView>
+    </Provider>
   );
 }
