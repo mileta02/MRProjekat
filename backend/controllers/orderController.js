@@ -2,6 +2,21 @@ import { asyncErrorCatcher } from "../middlewares/errorMiddleware.js";
 import { Order } from "../models/order.js";
 import { Product } from "../models/product.js";
 import { ErrorHandler } from "../utils/errorHandler.js";
+import {stripe} from "../server.js";
+
+export const processPayment = asyncErrorCatcher(async(req,res,next)=>{
+    const {totalAmount} = req.body;
+
+    const {client_secret} = await stripe.paymentIntents.create({
+        amount: totalAmount,
+        currency:"eur"
+    });
+    
+    res.status(201).json({
+        success:true,
+        client_secret
+    })    
+})
 
 export const createOrder = asyncErrorCatcher(async (req, res, next) => {
     const {
@@ -69,7 +84,7 @@ export const getAdminOrders = asyncErrorCatcher(async (req, res, next) => {
     });
 });
 
-export const proccessOrder = asyncErrorCatcher(async (req, res, next) => {
+export const processOrder = asyncErrorCatcher(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
 
     if (!order) {
@@ -87,6 +102,6 @@ export const proccessOrder = asyncErrorCatcher(async (req, res, next) => {
     await order.save();
     res.status(200).json({
         success: true,
-        message: "Order proccessed successfully."
+        message: "Order processed successfully."
     });
 });

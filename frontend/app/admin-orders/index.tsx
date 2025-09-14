@@ -9,7 +9,7 @@ import { Headline } from "react-native-paper";
 export default function AdminOrders() {
 
     const loading = false;
-    const processOrderLoading = false;
+    const processOrderLoading = true;
     const updateHandler = () => {
 
     }

@@ -43,14 +43,14 @@ export default function Admin() {
   const loading = false;
   const navigationHandler = (text: string) => {
     switch (text) {
-      case "Product":
-        router.push("/new-product");
+      case "Category":
+        router.push("/categories");
         break;
       case "All Orders":
         router.push("/admin-orders");
         break;
       case "Category":
-        router.push("/categories");
+        router.push("/new-product");
         break;
       default:
         router.push("/admin-orders");

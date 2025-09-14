@@ -1,7 +1,7 @@
 import Footer from "@/components/custom/Footer";
 import { colors, inputOptions, styles } from "@/styles/styles";
-import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { router } from "expo-router";
+import { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -29,16 +29,6 @@ export default function Signup() {
     router.push("/verify");
   };
 
-  const { imageParam } = useLocalSearchParams();
-    const [image, setImage] = useState("");
-  
-    useEffect(() => {
-      if (imageParam) {
-        setImage(imageParam as string);
-        
-      }
-    }, [imageParam]);
-
   return (
     <>
       <View style={{ ...styles.defaultStyle }}>
@@ -60,19 +50,11 @@ export default function Signup() {
           contentContainerStyle={{ paddingBottom: 50 }}
         >
           <View style={{ justifyContent: "center" }}>
-            {image ? (
-                  <Avatar.Image
-                    size={80}
-                    style={{ backgroundColor: colors.color1 }}
-                    source={{ uri: image }}
-                  />
-                ) : (
-                  <Avatar.Icon
-                    icon="image"
-                    size={80}
-                    style={{ backgroundColor: colors.color2 }}
-                  />
-                )}
+            <Avatar.Image
+              style={{ alignSelf: "center", backgroundColor: colors.color1 }}
+              size={80}
+              source={require("../../assets/images/profile.png")}
+            />
             <TouchableOpacity onPress={() => router.push("/camera")}>
               <Button textColor={colors.color1}>Change Photo</Button>
             </TouchableOpacity>
