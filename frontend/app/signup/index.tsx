@@ -1,7 +1,8 @@
 import Footer from "@/components/custom/Footer";
 import { colors, inputOptions, styles } from "@/styles/styles";
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import mime from "mime";
 import {
   ScrollView,
   StyleSheet,
@@ -10,6 +11,9 @@ import {
   View,
 } from "react-native";
 import { Avatar, Button, TextInput } from "react-native-paper";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { useMessageErrorUser } from "@/utils/hooks";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -19,16 +23,43 @@ export default function Signup() {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [pinCode, setPinCode] = useState("");
-
-  const loading = false;
+  const [avatar, setAvatar] = useState("");
 
   const disableBtn =
     !name || !email || !password || !address || !city || !country || !pinCode;
 
+  const dispatch = useDispatch<AppDispatch>();
+
+  const loading = useMessageErrorUser(dispatch, "profile");
+
   const submitHandler = () => {
-    router.push("/verify");
+    const myForm = new FormData();
+
+    myForm.append("name", name);
+    myForm.append("email", email);
+    myForm.append("password", password);
+    myForm.append("address", address);
+    myForm.append("city", city);
+    myForm.append("country", country);
+    myForm.append("pinCode", pinCode);
+
+    if (avatar !== "") {
+      myForm.append("file", {
+        uri: avatar,
+        type: mime.getType(avatar) || "image/jpeg",
+        name: avatar.split("/").pop(),
+      } as any);
+    }
   };
 
+  const { imageParam } = useLocalSearchParams();
+  const [image, setImage] = useState("");
+
+  useEffect(() => {
+    if (imageParam) {
+      setImage(imageParam as string);
+    }
+  }, [imageParam]);
   return (
     <>
       <View style={{ ...styles.defaultStyle }}>
@@ -50,11 +81,19 @@ export default function Signup() {
           contentContainerStyle={{ paddingBottom: 50 }}
         >
           <View style={{ justifyContent: "center" }}>
-            <Avatar.Image
-              style={{ alignSelf: "center", backgroundColor: colors.color1 }}
-              size={80}
-              source={require("../../assets/images/profile.png")}
-            />
+            {image ? (
+              <Avatar.Image
+                size={80}
+                style={{ backgroundColor: colors.color1 }}
+                source={{ uri: image }}
+              />
+            ) : (
+              <Avatar.Icon
+                icon="image"
+                size={80}
+                style={{ backgroundColor: colors.color2 }}
+              />
+            )}
             <TouchableOpacity onPress={() => router.push("/camera")}>
               <Button textColor={colors.color1}>Change Photo</Button>
             </TouchableOpacity>

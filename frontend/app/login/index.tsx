@@ -1,14 +1,27 @@
 import Footer from "@/components/custom/Footer";
+import { login } from "@/redux/actions/userActions";
+import { AppDispatch, RootState, server } from "@/redux/store";
 import { colors, styles } from "@/styles/styles";
+import { useMessageErrorUser } from "@/utils/hooks";
 import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { useDispatch } from "react-redux";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const loading = false;
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const loading = useMessageErrorUser(dispatch, "profile");
+
+  const submitHandler = () => {
+    console.log(server)
+    dispatch(login(email, password));
+  }
+
 
   return (
     <>
@@ -43,6 +56,7 @@ export default function Login() {
             <Text style={styles.forgotPassword}>Forgot Password?</Text>
           </TouchableOpacity>
           <Button
+            onPress={submitHandler}
             loading={loading}
             style={styles.btn}
             textColor={colors.color2}

@@ -1,11 +1,15 @@
 import ButtonBox from "@/components/custom/ButtonBox";
 import Footer from "@/components/custom/Footer";
 import Loader from "@/components/custom/Loader";
+import { logout } from "@/redux/actions/userActions";
+import { AppDispatch } from "@/redux/store";
 import { colors, localStyles, styles } from "@/styles/styles";
-import { router } from "expo-router";
-import { useState } from "react";
+import { useMessageErrorUser } from "@/utils/hooks";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar, Button } from "react-native-paper";
+import { useDispatch } from "react-redux";
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -13,13 +17,15 @@ export default function Profile() {
     email: "andrejmax347@gmail.com",
   });
 
-  const loading = false;
+  const dispatch = useDispatch<AppDispatch>();
+
+  const loading = useMessageErrorUser(dispatch, "login");
 
   const logoutHandler = () => {
-
+    dispatch(logout());
   };
 
-  const navigateHandler = (text:string) => {
+  const navigateHandler = (text: string) => {
     switch (text) {
       case "Admin":
         router.push("/admin");
@@ -41,6 +47,15 @@ export default function Profile() {
     }
   };
 
+  const { imageParam } = useLocalSearchParams();
+  const [image, setImage] = useState("");
+
+  useEffect(() => {
+    if (imageParam) {
+      setImage(imageParam as string);
+    }
+  }, [imageParam]);
+
   return (
     <>
       <View style={{ ...styles.defaultStyle }}>
@@ -53,12 +68,29 @@ export default function Profile() {
         ) : (
           <>
             <View style={profileStyles.container}>
-              <Avatar.Image
-                source={{}}
-                size={100}
-                style={{ backgroundColor: colors.color1 }}
-              />
-              <TouchableOpacity onPress={() => router.push("/camera")}>
+              {image ? (
+                <Avatar.Image
+                  size={80}
+                  style={{ backgroundColor: colors.color1 }}
+                  source={{ uri: image }}
+                />
+              ) : (
+                <Avatar.Icon
+                  icon="image"
+                  size={80}
+                  style={{ backgroundColor: colors.color2 }}
+                />
+              )}
+              <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: "/camera",
+                    params: {
+                      alias: "updateProfile",
+                    },
+                  })
+                }
+              >
                 <Button textColor={colors.color1}>Change Photo</Button>
               </TouchableOpacity>
               <Text style={profileStyles.name}>{user.name}</Text>

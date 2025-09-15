@@ -1,15 +1,17 @@
+import { RootState } from "@/redux/store";
 import { colors } from "@/styles/styles";
 import { router, useNavigation } from "expo-router";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-paper";
+import { useSelector } from "react-redux";
 
 type FooterProps = {
   activeRoute?: string;
 };
 
 export default function Footer({ activeRoute = "home" }: FooterProps) {
-  const isAuthenticated = true;
-  const loading = false;
+
+  const {loading, isAuthenticated} = useSelector((state: RootState)=> state.user)
 
   const navigationHandler = (key: number) => {
     switch (key) {
@@ -54,7 +56,7 @@ export default function Footer({ activeRoute = "home" }: FooterProps) {
         >
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => navigationHandler(2)}
+            onPress={() => navigationHandler(1)}
           >
             <Avatar.Icon
               {...avatarOption}

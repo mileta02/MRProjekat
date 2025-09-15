@@ -6,10 +6,13 @@ import SearchModal, { NavigationProp } from "@/components/custom/SearchModal";
 import { ThemedView } from "@/components/ThemedView";
 import { colors, styles } from "@/styles/styles";
 import { useNavigation } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Avatar, Button } from "react-native-paper";
 import { productData, ProductType } from "@/types/types";
+import { useDispatch, useSelector } from "react-redux";
+import { loadUser } from "@/redux/actions/userActions";
+import { AppDispatch } from "@/redux/store";
 
 
 
@@ -47,6 +50,12 @@ export default function Home() {
   };
 
   const addToCardHandler = (id: string) => {};
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(()=>{
+    dispatch(loadUser())
+  },[dispatch])
 
   return (
     <>

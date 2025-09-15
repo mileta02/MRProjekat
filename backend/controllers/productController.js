@@ -4,6 +4,8 @@ import { ErrorHandler } from "../utils/errorHandler.js";
 import { getDataUri } from "../utils/features.js";
 import cloudinary from "cloudinary";
 
+
+
 export const getAllProducts = asyncErrorCatcher(async (req, res, next) => {
     const { keyword, category } = req.query || {};
 
@@ -24,6 +26,19 @@ export const getAllProducts = asyncErrorCatcher(async (req, res, next) => {
         success: true,
         products
     });
+});
+
+export const getAdminProducts = asyncErrorCatcher(async (req, res, next) => {
+  const products = await Product.find({}).populate("category");
+
+  const outOfStock = products.filter((i) => i.stock === 0);
+
+  res.status(200).json({
+    success: true,
+    products,
+    outOfStock: outOfStock.length,
+    inStock: products.length - outOfStock.length,
+  });
 });
 
 export const getProduct = asyncErrorCatcher(async (req, res, next) => {

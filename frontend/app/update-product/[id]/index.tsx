@@ -8,6 +8,7 @@ import {
   localStyles,
   styles,
 } from "@/styles/styles";
+import { ProductType } from "@/types/types";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
@@ -36,7 +37,7 @@ export default function UpdateProduct(id: string) {
     },
   ]);
   const [visible, setVisible] = useState(false);
-
+const [product, setProduct] = useState<ProductType>();
   const loadingOther = false;
   const submitHandler = () => {
 
@@ -72,7 +73,17 @@ export default function UpdateProduct(id: string) {
               }}
             >
               <Button
-                onPress={() => router.push(`/product-images/${id}`)}
+                onPress={() =>
+                  router.push({
+                    pathname: "/product-images/[id]",
+                    params: {
+                      id: String(id),
+                      images: encodeURIComponent(
+                        JSON.stringify(product?.images ?? [])
+                      ),
+                    },
+                  })
+                }
                 textColor={colors.color1}
               >
                 Manage Images
