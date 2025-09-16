@@ -1,6 +1,9 @@
 import Footer from "@/components/custom/Footer";
 import Header from "@/components/custom/Header";
+import { updateProfile } from "@/redux/actions/otherActions";
+import { AppDispatch, RootState } from "@/redux/store";
 import { colors, inputOptions, styles } from "@/styles/styles";
+import { useMessageAndErrorOther } from "@/utils/hooks";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -11,22 +14,26 @@ import {
   View,
 } from "react-native";
 import { Avatar, Button, TextInput } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function UpdateProfile() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-  const [pinCode, setPinCode] = useState("");
+export default function UpdateProfile( {navigation}: any) {
 
-  const loading = false;
+  const { user } = useSelector((state: RootState) => state.user);
+  const [name, setName] = useState(user?.name);
+  const [email, setEmail] = useState(user?.email);
+  const [address, setAddress] = useState(user?.address);
+  const [city, setCity] = useState(user?.city);
+  const [country, setCountry] = useState(user?.country);
+  const [pinCode, setPinCode] = useState(user?.pinCode.toString());
+  const dispatch = useDispatch<AppDispatch>();
 
-  const disableBtn =
-    !name || !email || !address || !city || !country || !pinCode;
+  const loading = useMessageAndErrorOther(dispatch, navigation, "profile");
+
+  
 
   const submitHandler = () => {
-    router.push("/verify");
+    //router.push("/verify");
+    dispatch(updateProfile(name,email,address,city,country,Number(pinCode)));
   };
 
   return (
@@ -98,7 +105,6 @@ export default function UpdateProfile() {
               <Button
                 loading={loading}
                 textColor={colors.color2}
-                disabled={disableBtn}
                 style={styles.btn}
                 onPress={submitHandler}
               >

@@ -30,3 +30,36 @@ export const useMessageErrorUser = (dispatch: AppDispatch, navigateTo: string = 
 
   return loading;
 };
+
+export const useMessageAndErrorOther = (
+  dispatch: AppDispatch,
+  navigation?: any,
+  navigateTo?: string,
+  func?: () => any
+) => {
+  const { loading, message, error } = useSelector(
+    (state: RootState) => state.other
+  );
+
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: error,
+      });
+      dispatch(clearError());
+    }
+
+    if (message) {
+      Toast.show({
+        type: "success",
+        text1: message,
+      });
+      dispatch(clearMessage());
+      navigateTo && navigation.navigate(navigateTo);
+      func && dispatch(func());
+    }
+  }, [error, message, dispatch, navigation, navigateTo, func]);
+
+  return loading;
+};

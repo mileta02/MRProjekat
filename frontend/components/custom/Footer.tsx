@@ -46,6 +46,9 @@ export default function Footer({ activeRoute = "home" }: FooterProps) {
           backgroundColor: colors.color1,
           borderTopRightRadius: 120,
           borderTopLeftRadius: 120,
+          position: "absolute",
+          width: "100%",
+          bottom: 0
         }}
       >
         <View

@@ -2,14 +2,27 @@ import Footer from "@/components/custom/Footer";
 import Header from "@/components/custom/Header";
 import { colors, styles } from "@/styles/styles";
 import { router } from "expo-router";
+import { AppDispatch, RootState, server } from "@/redux/store";
+import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { updatePassword } from "@/redux/actions/otherActions";
+import { useMessageAndErrorOther } from "@/utils/hooks";
 
 export default function ChangePassword() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const loading = false;
+
+  const dispatch = useDispatch<AppDispatch>();
+  const loading = useMessageAndErrorOther(dispatch);
+
+  const submitHandler = () => {
+    console.log(server)
+    dispatch(updatePassword(oldPassword, newPassword));
+    setOldPassword("");
+    setNewPassword("");
+  }
 
   return (
     <>

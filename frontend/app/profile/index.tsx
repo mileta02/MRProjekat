@@ -1,21 +1,25 @@
 import ButtonBox from "@/components/custom/ButtonBox";
 import Footer from "@/components/custom/Footer";
 import Loader from "@/components/custom/Loader";
-import { logout } from "@/redux/actions/userActions";
+import { loadUser, logout } from "@/redux/actions/userActions";
 import { AppDispatch } from "@/redux/store";
 import { colors, localStyles, styles } from "@/styles/styles";
-import { useMessageErrorUser } from "@/utils/hooks";
+import { useMessageAndErrorOther, useMessageErrorUser } from "@/utils/hooks";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar, Button } from "react-native-paper";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import mime, { Mime } from "mime";
+import { updatePic } from "@/redux/actions/otherActions";
+import { useIsFocused } from "@react-navigation/native";
+export default function Profile( {navigation, route} : any) {
 
-export default function Profile() {
-  const [user, setUser] = useState({
-    name: "Andrej",
-    email: "andrejmax347@gmail.com",
-  });
+
+  const { user } = useSelector((state:any) => state.user);
+  const [avatar, setAvatar] = useState(user?.avatar?user.avatar.url : null);
+
+  const isFocused = useIsFocused();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -50,11 +54,23 @@ export default function Profile() {
   const { imageParam } = useLocalSearchParams();
   const [image, setImage] = useState("");
 
+  const loadingPic = useMessageAndErrorOther(dispatch, null, undefined, loadUser);
+
   useEffect(() => {
-    if (imageParam) {
-      setImage(imageParam as string);
+    if (route.params?.image) {
+      setAvatar(route.params.image);
+      // dispatch updatePic Here
+      const myForm = new FormData();
+      myForm.append("file", {
+        uri: route.params.image,
+        type: mime.getType(route.params.image),
+        name: route.params.image.split("/").pop(),
+      } as any);
+      dispatch(updatePic(myForm));
     }
-  }, [imageParam]);
+
+    dispatch(loadUser());
+  }, [route.params, dispatch, isFocused]);
 
   return (
     <>
@@ -82,6 +98,7 @@ export default function Profile() {
                 />
               )}
               <TouchableOpacity
+                disabled={loadingPic}
                 onPress={() =>
                   router.push({
                     pathname: "/camera",
@@ -91,7 +108,7 @@ export default function Profile() {
                   })
                 }
               >
-                <Button textColor={colors.color1}>Change Photo</Button>
+                <Button disabled={loadingPic} loading={loadingPic} textColor={colors.color1}>Change Photo</Button>
               </TouchableOpacity>
               <Text style={profileStyles.name}>{user.name}</Text>
               <Text
@@ -117,12 +134,16 @@ export default function Profile() {
                   text={"Orders"}
                   icon={"format-list-bulleted-square"}
                 />
-                <ButtonBox
-                  handler={navigateHandler}
-                  text={"Admin"}
-                  icon={"view-dashboard"}
-                  reverse={true}
-                />
+                {
+                  user?.role === "admin" && (
+                    <ButtonBox
+                      handler={navigateHandler}
+                      text={"Admin"}
+                      icon={"view-dashboard"}
+                      reverse={true}
+                    />
+                  )
+                }
                 <ButtonBox
                   handler={navigateHandler}
                   text={"Profile"}
