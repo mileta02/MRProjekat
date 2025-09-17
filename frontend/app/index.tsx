@@ -15,6 +15,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { getAllProducts } from "@/redux/actions/productActions";
 import { useIsFocused } from "@react-navigation/native";
 import { useSetCategories } from "@/utils/hooks";
+import Toast from "react-native-toast-message";
 
 
 
@@ -53,7 +54,28 @@ export default function Home() {
     setCategory(id);
   };
 
-  const addToCardHandler = (id: string) => {};
+  const addToCardHandler = (id: number, name: string, price: number, image: string, stock: number) => {
+    if(stock === 0) return Toast.show({
+      type:"error",
+      text1:"Out of stock.",
+    });
+    dispatch({
+      type:"addToCart",
+      payload:{
+        product: id,
+        name, 
+        price, 
+        image, 
+        stock,
+        quantity: 1
+      }
+    });
+
+    Toast.show({
+      type:"error",
+      text1:"Added to cart.",
+    });
+  };
 
   const dispatch = useDispatch<AppDispatch>();
   const isFocused = useIsFocused();

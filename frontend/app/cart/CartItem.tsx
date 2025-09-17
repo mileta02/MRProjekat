@@ -12,8 +12,8 @@ type CartItemProps = {
   price: number;
   image: string;
   quantity: number;
-  incrementHandler: (id: string, quantity: number, stock: number) => void;
-  decrementHandler: (id: string, quantity: number, stock: number) => void;
+  incrementHandler: (id: string, name: string, price: number, image: string, stock: number, quantity: number) => void;
+  decrementHandler: (id: string, name: string, price: number, image: string, stock: number, quantity: number) => void;
   handleNavigate: (id: string) => void;
 };
 
@@ -80,7 +80,7 @@ export default function CartItem({
           alignSelf: "center",
         }}
       >
-        <TouchableOpacity onPress={() => incrementHandler(id, quantity, stock)}>
+        <TouchableOpacity onPress={() => incrementHandler(id, name, price, image, stock, quantity)}>
           <Avatar.Icon
             icon={"plus"}
             size={20}
@@ -106,7 +106,7 @@ export default function CartItem({
         >
           {quantity}
         </Text>
-        <TouchableOpacity onPress={() => decrementHandler(id, quantity, stock)}>
+        <TouchableOpacity onPress={() => decrementHandler(id, name, price, image, stock, quantity)}>
           <Avatar.Icon
             icon={"minus"}
             size={20}

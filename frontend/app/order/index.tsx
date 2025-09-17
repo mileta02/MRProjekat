@@ -1,17 +1,23 @@
 import Header from "@/components/custom/Header";
 import Heading from "@/components/custom/Heading";
-import { cartItems } from "@/data/data";
 import { colors, styles } from "@/styles/styles";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import OrderItem from "./OrderItem";
 import { router } from "expo-router";
 import { Button } from "react-native-paper";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { useState } from "react";
 
 export default function Order() {
-  const subtotal = 5000;
-  const shipping = 200;
-  const tax = 100;
-  const total = subtotal + tax + shipping;
+
+  const { cartItems } = useSelector((state:RootState) => state.cart);
+  const [subtotal] = useState(cartItems.reduce(
+    (prev, curr) => prev + curr.quantity * curr.price, 0)
+  );
+  const [ shipping ] = useState( subtotal > 10000 ? 0 : 200);
+  const [ tax ] = useState(Number((0.20 * subtotal).toFixed()));
+  const [ total ] = useState( subtotal + shipping + tax );
 
   return (
     <View

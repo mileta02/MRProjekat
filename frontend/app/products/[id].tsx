@@ -28,36 +28,40 @@ const iconOptions = {
   width: 25,
 };
 
-// const images = [
-//   {
-//     id: "1",
-//     url: "https://picsum.photos/400/300",
-//   },
-//   {
-//     id: "2",
-//     url: "https://picsum.photos/401/300",
-//   },
-// ];
-
-export default function ProductDetails() {
+export default function ProductDetails({ route }: any) {
+  const { params } = route;
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  // const product: ProductType = productData.find((x) => x._id === id)!;
+  const {
+    product: { name, price, stock, description, images },
+  } = useSelector((state: RootState) => state.product);
 
+  const dispatch = useDispatch<AppDispatch>();
   const [quantity, setQuantity] = useState(0);
   const progress = useSharedValue(0);
   const isCarousel = useRef(null);
 
   const addToCardHandler = (stock: number) => {
     if(stock === 0) return Toast.show({
-        type: "error",
-        text1: "Out Of Stock",
-        text2: ""
-    });
-    Toast.show({
-        type: "success",
-        text1: "Added To Cart"
-    })
+          type:"error",
+          text1:"Out of stock.",
+        });
+        dispatch({
+          type:"addToCart",
+          payload:{
+            product: params.id,
+            name, 
+            price, 
+            image: images[0]?.url, 
+            stock,
+            quantity, 
+          },
+        });
+    
+        Toast.show({
+          type:"error",
+          text1:"Added to cart.",
+        });
   };
 
   const increment = (stock: number) => {
@@ -77,7 +81,6 @@ export default function ProductDetails() {
     }
   };
 
-  const dispatch = useDispatch<AppDispatch>();
   const isFocused = useIsFocused();
 
   const {product, loading} = useSelector((state: RootState) => state.product);

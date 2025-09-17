@@ -9,8 +9,8 @@ export type ProductCardProps = {
     name: string,
     price: number,
     image: string,
-    id: string,
-    addToCardHandler: (id: string, stock: number) => void,
+    id: number,
+    addToCardHandler: (id: number, name: string, price: number, image: string, stock: number) => void,
     index: number
 }
 
@@ -21,8 +21,8 @@ export default function ProductCard({stock, name, price, image, id, addToCardHan
     return(
        <TouchableOpacity activeOpacity={1} onPress={()=> router.push(`/products/${id}`)}>
             <View style = {{
-                elevation: 5,
-                width: 220,
+                elevation: 15,
+                width: 250,
                 alignItems:  "center",
                 justifyContent: "space-between",
                 margin: 20,
@@ -54,7 +54,8 @@ export default function ProductCard({stock, name, price, image, id, addToCardHan
                     <Text numberOfLines= {2} style = {{
                         color: index % 2 === 0 ? colors.color2 : colors.color3,
                         fontSize: 25,
-                        fontWeight: "300"
+                        fontWeight: "300",
+                        width: "60%"
                     }}>{name}</Text>
                      <Text numberOfLines= {2} style = {{
                         color: index % 2 === 0 ? colors.color2 : colors.color3,
@@ -67,9 +68,10 @@ export default function ProductCard({stock, name, price, image, id, addToCardHan
                     borderRadius: 0,
                     borderBottomRightRadius: 20,
                     borderBottomLeftRadius: 20,
-                    width: "100%"
+                    width: "100%",
+                    paddingVertical: 5
                 }}>
-                    <Button  textColor={index % 2 === 0 ? colors.color1 : colors.color2} onPress={()=> addToCardHandler(id, stock)}>
+                    <Button  textColor={index % 2 === 0 ? colors.color1 : colors.color2} onPress={()=> addToCardHandler(id, name, price, image, stock)}>
                         Add To Cart
                     </Button>
                 </TouchableOpacity>
