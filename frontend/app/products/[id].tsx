@@ -1,11 +1,10 @@
 import Header from "@/components/custom/Header";
 import { colors, styles } from "@/styles/styles";
 import { useLocalSearchParams } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Image,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -15,6 +14,10 @@ import Carousel from "react-native-reanimated-carousel";
 import { Avatar, Button } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import { productData, ProductType } from "@/types/types";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
+import { getProductDetails } from "@/redux/actions/productActions";
 
 const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = SLIDER_WIDTH;
@@ -26,21 +29,21 @@ const iconOptions = {
   width: 25,
 };
 
-const images = [
-  {
-    id: "1",
-    url: "https://picsum.photos/400/300",
-  },
-  {
-    id: "2",
-    url: "https://picsum.photos/401/300",
-  },
-];
+// const images = [
+//   {
+//     id: "1",
+//     url: "https://picsum.photos/400/300",
+//   },
+//   {
+//     id: "2",
+//     url: "https://picsum.photos/401/300",
+//   },
+// ];
 
 export default function ProductDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const product: ProductType = productData.find((x) => x._id === id)!;
+  // const product: ProductType = productData.find((x) => x._id === id)!;
 
   const [quantity, setQuantity] = useState(0);
 
@@ -71,6 +74,15 @@ export default function ProductDetails() {
     }
   };
 
+  const dispatch = useDispatch<AppDispatch>();
+  const isFocused = useIsFocused();
+
+  const {product, loading} = useSelector((state: RootState) => state.product);
+
+  useEffect(()=>{
+    dispatch(getProductDetails(id));
+  },[dispatch, id])
+
   return (
     <View
       style={{
@@ -84,7 +96,7 @@ export default function ProductDetails() {
         ref={isCarousel}
         width={SLIDER_WIDTH}
         height={300}
-        data={images}
+        data={product.images}
         onProgressChange={progress}
         style={{ margin: "auto", width: "90%", marginTop: 80, height: 300 }}
         renderItem={({ item, index }) => (
@@ -96,7 +108,7 @@ export default function ProductDetails() {
             }}
           >
             <Image
-              source={{ uri: item.url }}
+              source={{ uri: (item as { url: string }).url }}
               style={{
                 width: ITEM_WIDTH,
                 height: 300,

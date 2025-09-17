@@ -7,8 +7,13 @@ import { Button } from "react-native-paper";
 import CartItem from "./CartItem";
 import { router } from "expo-router";
 import { cartItems } from "@/data/data";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 export default function Cart() {
+
+  const dispatch = useDispatch();
+  const {cartItems} = useSelector((state: RootState) => state.cart);
 
   const incrementHandler = (id: string, quantity: number, stock: number) => {
     if(stock > quantity){

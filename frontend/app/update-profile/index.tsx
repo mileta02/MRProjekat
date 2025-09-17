@@ -111,7 +111,6 @@ export default function UpdateProfile( {navigation}: any) {
                 Update
               </Button>
 
-              <Text style={styles.or}>OR</Text>
             </View>
           </View>
         </ScrollView>

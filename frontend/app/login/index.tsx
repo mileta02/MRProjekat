@@ -1,6 +1,6 @@
 import Footer from "@/components/custom/Footer";
 import { login } from "@/redux/actions/userActions";
-import { AppDispatch, RootState, server } from "@/redux/store";
+import { AppDispatch, server } from "@/redux/store";
 import { colors, styles } from "@/styles/styles";
 import { useMessageErrorUser } from "@/utils/hooks";
 import { router } from "expo-router";
@@ -18,10 +18,8 @@ export default function Login() {
   const loading = useMessageErrorUser(dispatch, "profile");
 
   const submitHandler = () => {
-    console.log(server)
     dispatch(login(email, password));
   }
-
 
   return (
     <>

@@ -5,45 +5,53 @@ import ProductCard from "@/app/products/ProductCard";
 import SearchModal, { NavigationProp } from "@/components/custom/SearchModal";
 import { ThemedView } from "@/components/ThemedView";
 import { colors, styles } from "@/styles/styles";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Avatar, Button } from "react-native-paper";
 import { productData, ProductType } from "@/types/types";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUser } from "@/redux/actions/userActions";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
+import { getAllProducts } from "@/redux/actions/productActions";
+import { useIsFocused } from "@react-navigation/native";
+import { useSetCategories } from "@/utils/hooks";
 
 
 
 export default function Home() {
-  const categories = [
-    {
-      name: "All",
-      _id: "all",
-    },
-    {
-      name: "Electronics",
-      _id: "electronics",
-    },
-    {
-      name: "Clothing",
-      _id: "clothing",
-    },
-    {
-      name: "Books",
-      _id: "books",
-    },
-    {
-      name: "Toys",
-      _id: "toys",
-    },
-  ];
+  // const categories = [
+  //   {
+  //     name: "All",
+  //     _id: "all",
+  //   },
+  //   {
+  //     name: "Electronics",
+  //     _id: "electronics",
+  //   },
+  //   {
+  //     name: "Clothing",
+  //     _id: "clothing",
+  //   },
+  //   {
+  //     name: "Books",
+  //     _id: "books",
+  //   },
+  //   {
+  //     name: "Toys",
+  //     _id: "toys",
+  //   },
+  // ];
 
+  const [categories, setCategories] = useState<any[]>([]);
   const [category, setCategory] = useState<string>("all");
   const [activeSearch, setActiveSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [products, setProducts] = useState<ProductType[]>(productData);
+
+  const {isAuthenticated, loading} = useSelector((state: RootState) => state.user);
+  const {products, loading: productLoading} = useSelector((state: RootState) => state.product);
+
+  console.log("Res:",isAuthenticated, loading)
 
   const categoryButtonHangler = (id: string) => {
     setCategory(id);
@@ -52,10 +60,22 @@ export default function Home() {
   const addToCardHandler = (id: string) => {};
 
   const dispatch = useDispatch<AppDispatch>();
+  const isFocused = useIsFocused();
+  useSetCategories(setCategories, isFocused);
 
   useEffect(()=>{
+    if(!loading && !isAuthenticated){
+      router.replace("/login");
+    }
     dispatch(loadUser())
-  },[dispatch])
+  },[])
+
+  useEffect(()=>{
+    const timeOut = setTimeout(()=>{
+      dispatch(getAllProducts(searchQuery, category));
+    },1000)
+    return () => clearTimeout(timeOut);
+  },[searchQuery, category, isFocused,dispatch])
 
   return (
     <>
@@ -127,7 +147,7 @@ export default function Home() {
                       color: category === item._id ? colors.color2 : "gray",
                     }}
                   >
-                    {item.name}
+                    {item.category}
                   </Text>
                 </Button>
               );

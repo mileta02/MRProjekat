@@ -25,6 +25,17 @@ export const otherSlice = createSlice({
     updatePicRequest(state) {
       state.loading = true;
     },
+    placeOrderRequest(state) {
+      state.loading = true;
+    },
+    placeOrderSuccess(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    placeOrderFail(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
     updatePasswordSuccess(state, action: PayloadAction<string>) {
       state.loading = false;
       state.message = action.payload;
@@ -65,11 +76,14 @@ export const {
   updateProfileRequest,
   updateProfileFail,
   updateProfileSuccess,
-  clearError,
-  clearMessage,
+  clearError: clearOtherError,     // ← Preimenovati da se izbegnu konflikti
+  clearMessage: clearOtherMessage, // ← Preimenovati da se izbegnu konflikti
   updatePicFail,
   updatePicRequest,
-  updatePicSuccess
+  updatePicSuccess,
+  placeOrderRequest,
+  placeOrderSuccess,
+  placeOrderFail
 } = otherSlice.actions;
 
 export const otherReducer = otherSlice.reducer;

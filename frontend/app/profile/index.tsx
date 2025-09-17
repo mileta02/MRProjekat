@@ -17,7 +17,7 @@ export default function Profile( {navigation, route} : any) {
 
 
   const { user } = useSelector((state:any) => state.user);
-  const [avatar, setAvatar] = useState(user?.avatar?user.avatar.url : null);
+  const [avatar, setAvatar] = useState("");
 
   const isFocused = useIsFocused();
 
@@ -54,23 +54,32 @@ export default function Profile( {navigation, route} : any) {
   const { imageParam } = useLocalSearchParams();
   const [image, setImage] = useState("");
 
+
   const loadingPic = useMessageAndErrorOther(dispatch, null, undefined, loadUser);
 
   useEffect(() => {
-    if (route.params?.image) {
-      setAvatar(route.params.image);
+    if (imageParam) {
+      setAvatar(imageParam as string);
       // dispatch updatePic Here
       const myForm = new FormData();
       myForm.append("file", {
-        uri: route.params.image,
-        type: mime.getType(route.params.image),
-        name: route.params.image.split("/").pop(),
+        uri: imageParam as string,
+        type: mime.getType(imageParam as string) || "image/jpeg",
+        name: (imageParam as string).split("/").pop(),
       } as any);
+      console.log("myForm", myForm);
       dispatch(updatePic(myForm));
     }
+  }, [imageParam,dispatch]);
 
+
+  useEffect(() => {
     dispatch(loadUser());
-  }, [route.params, dispatch, isFocused]);
+  }, []);
+
+  useEffect(() => {
+    setAvatar(user?.avatar?user.avatar.url : null);
+  }, [user]);
 
   return (
     <>
@@ -84,11 +93,11 @@ export default function Profile( {navigation, route} : any) {
         ) : (
           <>
             <View style={profileStyles.container}>
-              {image ? (
+              {avatar ? (
                 <Avatar.Image
                   size={80}
                   style={{ backgroundColor: colors.color1 }}
-                  source={{ uri: image }}
+                  source={{ uri: avatar }}
                 />
               ) : (
                 <Avatar.Icon

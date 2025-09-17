@@ -18,10 +18,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "*",
+    origin: true,
     credentials: true,
     methods: ["GET","POST","PUT","DELETE"],
-    origin: [process.env.FRONTEND_URI_1, process.env.FRONTEND_URI_2]
+    // origin: [process.env.FRONTEND_URI_1, process.env.FRONTEND_URI_2m, "http://192.168.1.12:8081",
+    //   "exp://192.168.1.12:8081" ]
   })
 )
 // Routes

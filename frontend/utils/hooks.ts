@@ -1,16 +1,18 @@
 import { clearError, clearMessage } from "@/redux/reducers/userReducer";
-import { AppDispatch, RootState } from "@/redux/store";
+import { AppDispatch, RootState, server } from "@/redux/store";
+import axios from "axios";
 import { RelativePathString, router } from "expo-router";
 import { useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 
 export const useMessageErrorUser = (dispatch: AppDispatch, navigateTo: string = "login") => {
-  const { loading, message, error, isAuthenticated } = useSelector(
+  const { loading, message, error } = useSelector(
     (state: RootState) => state.user
   );
 
   useEffect(() => {
+  
     if (error) {
       Toast.show({
         type: "error",
@@ -26,7 +28,7 @@ export const useMessageErrorUser = (dispatch: AppDispatch, navigateTo: string = 
       });
       dispatch(clearMessage());
     }
-  }, [ error, message]);
+  }, [error, message]);
 
   return loading;
 };
@@ -63,3 +65,17 @@ export const useMessageAndErrorOther = (
 
   return loading;
 };
+
+export const useSetCategories = (setCategories: (categories: any[]) => void, isFocused: boolean) => {
+
+  useEffect(() => {
+    axios.get(`${server}/product/categories`).then(res=>{
+      setCategories(res.data.categories);
+    }).catch(e=>{
+      Toast.show({
+        type: "error",
+        text1: e.response.data.message
+      })
+    })
+  },[isFocused])
+}

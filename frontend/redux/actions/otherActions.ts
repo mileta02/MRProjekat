@@ -9,7 +9,10 @@ import {
   updateProfileFail,
   updatePicRequest,
   updatePicSuccess,
-  updatePicFail
+  updatePicFail,
+  placeOrderRequest,
+  placeOrderSuccess,
+  placeOrderFail
 } from "../reducers/otherReducer";
 
 export const updatePassword =
@@ -18,7 +21,7 @@ export const updatePassword =
       dispatch(updatePasswordRequest());
 
       const { data } = await axios.put(
-        `${server}/user/changepassword`,
+        `${server}/user/changePassword`,
         { oldPassword, newPassword },
         {
           headers: { "Content-Type": "application/json" },
@@ -55,14 +58,14 @@ export const updatePassword =
   export const updatePic = (formData: any) => async (dispatch: AppDispatch) => {
   try {
     dispatch(updatePicRequest());
-
-    const { data } = await axios.post(
+    const { data } = await axios.put(
       `${server}/user/updateProfilePicture`,
       formData,
       {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        withCredentials: true,
       }
     );
     dispatch(updatePicSuccess(data.message));
@@ -70,3 +73,32 @@ export const updatePassword =
     dispatch(updatePicFail(error.response?.data?.message || error.message));
   }
 };
+
+export const placeOrder =
+  (cartItems: any, shippingInfo: any, paymentMethod: any, itemsPrice: any, taxPrice: any, shippingCharges: any, totalAmount: any, paymentInfo?: any) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(placeOrderRequest());
+
+      const { data } = await axios.post(
+        `${server}/order/new`,
+        { 
+          shippingInfo, 
+          orderItems: cartItems, 
+          paymentMethod, 
+          paymentInfo, 
+          itemsPrice, 
+          taxPrice, 
+          shippingCharges, 
+          totalAmount 
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
+      dispatch(placeOrderSuccess(data.message));
+    } catch (error: any) {
+      dispatch(placeOrderFail(error.response?.data?.message || error.message));
+    }
+  };

@@ -1,7 +1,7 @@
 import { RootState } from "@/redux/store";
 import { colors } from "@/styles/styles";
-import { router, useNavigation } from "expo-router";
-import { View, Text, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
+import { View, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-paper";
 import { useSelector } from "react-redux";
 
@@ -75,7 +75,7 @@ export default function Footer({ activeRoute = "home" }: FooterProps) {
               icon={
                 !isAuthenticated
                   ? "login"
-                  : activeRoute == "profile"
+                  : activeRoute === "profile"
                   ? "account "
                   : "account-outline"
               }
