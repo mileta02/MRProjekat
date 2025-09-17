@@ -9,21 +9,52 @@ import { router } from "expo-router";
 import { cartItems } from "@/data/data";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import Toast from "react-native-toast-message";
 
 export default function Cart() {
 
   const dispatch = useDispatch();
   const {cartItems} = useSelector((state: RootState) => state.cart);
 
-  const incrementHandler = (id: string, quantity: number, stock: number) => {
-    if(stock > quantity){
-      
+  const incrementHandler = (id: string, name: string, price: number, image: string, stock: number, quantity: number) => {
+    const newQuantity = quantity+1;
+    if(stock <= quantity) {
+      return Toast.show({
+        type:"error",
+        text1: "Maximum value reached."
+      });
     }
+    dispatch({
+      type:"addToCart",
+      payload:{
+        product:id,
+        name, 
+        price, 
+        image,
+        stock,
+        quantity: newQuantity, 
+      },
+    });
   }
-  const decrementHandler = (id: string, quantity: number, stock: number) => {
-    if(quantity > 0){
-
+  const decrementHandler = (id: string, name: string, price: number, image: string, stock: number, quantity: number) => {
+    const newQuantity = quantity - 1;
+    if(1 >= quantity) {
+      return dispatch({
+        type:"removeFromCart",
+        payload:id
+      });
     }
+    dispatch({
+      type:"addToCart",
+      payload:{
+        product:id,
+        name, 
+        price, 
+        image,
+        stock,
+        quantity: newQuantity, 
+      },
+    });
   }
 
   const handleNavigate = (id: string) => {
@@ -55,7 +86,7 @@ export default function Cart() {
         }}
       >
         <ScrollView showsVerticalScrollIndicator={false}>
-          {cartItems.map((item, index) => (
+          {cartItems.length>0?cartItems.map((item, index) => (
             <CartItem
               index = {index}
               key={index}
@@ -69,7 +100,9 @@ export default function Cart() {
               decrementHandler = {decrementHandler}
               handleNavigate = {handleNavigate}
             />
-          ))}
+          )):(
+            <Text style={{textAlign: "center", fontSize: 18}}>No items yet.</Text>
+          )}
         </ScrollView>
       </View>
       <View
@@ -79,8 +112,9 @@ export default function Cart() {
           paddingHorizontal: 35,
         }}
       >
-        <Text>5 Items</Text>
-        <Text>$3</Text>
+        <Text>{cartItems.length} Items</Text>
+        <Text>${cartItems.reduce(
+    (prev, curr) => prev + curr.quantity * curr.price, 0)}</Text>
       </View>
       <TouchableOpacity onPress = {cartItems.length > 0 ? () => router.push("/order"): undefined}>
         <Button

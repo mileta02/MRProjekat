@@ -1,3 +1,4 @@
+import { AppDispatch } from "@/redux/store";
 import { colors } from "@/styles/styles";
 import { RootStackParamList } from "@/types/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -6,13 +7,19 @@ import { router } from "expo-router";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-paper";
+import { useDispatch } from "react-redux";
 
 const Header = ({ back, emptyCart }: { back: boolean; emptyCart: boolean }) => {
   const navigate =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute();
 
-  const emptyCartHandler = () => {};
+  const dispatch = useDispatch<AppDispatch>();
+  const emptyCartHandler = () => {
+    dispatch({
+      type:"clearCart",
+    })
+  };
 
 
   return (
