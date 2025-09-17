@@ -16,7 +16,7 @@ import {
 import { Avatar, Button, TextInput } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function UpdateProfile( {navigation}: any) {
+export default function UpdateProfile() {
 
   const { user } = useSelector((state: RootState) => state.user);
   const [name, setName] = useState(user?.name);
@@ -27,7 +27,7 @@ export default function UpdateProfile( {navigation}: any) {
   const [pinCode, setPinCode] = useState(user?.pinCode.toString());
   const dispatch = useDispatch<AppDispatch>();
 
-  const loading = useMessageAndErrorOther(dispatch, navigation, "profile");
+  const loading = useMessageAndErrorOther(dispatch, "profile");
 
   
 
@@ -106,7 +106,7 @@ export default function UpdateProfile( {navigation}: any) {
                 loading={loading}
                 textColor={colors.color2}
                 style={styles.btn}
-                onPress={submitHandler}
+                onPress={()=>submitHandler()}
               >
                 Update
               </Button>

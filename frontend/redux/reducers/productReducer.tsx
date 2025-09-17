@@ -46,23 +46,26 @@ export const productSlice = createSlice({
     getProductDetailsSuccess(state, action: PayloadAction<any>) {
       state.loading = false;
       state.product = action.payload;
+      state.error = null;
     },
     getAllProductsFail(state, action: PayloadAction<string>) {
       state.loading = false;
       state.error = action.payload;
+      state.message = null;
     },
     getAdminProductsFail(state, action: PayloadAction<string>) {
       state.loading = false;
       state.error = action.payload;
+      state.message = null;
     },
     getProductDetailsFail(state, action: PayloadAction<string>) {
       state.loading = false;
       state.error = action.payload;
     },
-    clearError(state) {
+    clearProductError(state) {
       state.error = null;
     },
-    clearMessage(state) {
+    clearProductMessage(state) {
       state.message = null;
     },
   },
@@ -78,8 +81,8 @@ export const {
   getAllProductsFail,
   getAdminProductsFail,
   getProductDetailsFail,
-  clearError,
-  clearMessage,
+  clearProductError,
+  clearProductMessage,
 } = productSlice.actions;
 
 export const productReducer = productSlice.reducer;

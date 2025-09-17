@@ -52,7 +52,7 @@ export default function Profile() {
     }
   };
 
-  const loadingPic = useMessageAndErrorOther(dispatch, null, undefined);
+  const loadingPic = useMessageAndErrorOther(dispatch, undefined);
 
   useEffect(() => {
     if(!isAuthenticated){
@@ -75,8 +75,6 @@ export default function Profile() {
   useEffect(() => {
     setAvatar(user?.avatar?user.avatar.url : null);
   }, [user]);
-
-  console.log("user", user);
 
   return (
     <>

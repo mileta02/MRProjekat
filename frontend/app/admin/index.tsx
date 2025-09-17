@@ -5,7 +5,6 @@ import Loader from "@/components/custom/Loader";
 import ProductListItem from "@/components/custom/ProductListItem";
 import { AppDispatch } from "@/redux/store";
 import { colors, localStyles, styles } from "@/styles/styles";
-import { productData } from "@/types/types";
 import { useAdminProducts } from "@/utils/hooks";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
@@ -53,7 +52,7 @@ export default function Admin() {
         router.push("/admin-orders");
         break;
       case "Category":
-        router.push("/new-product");
+        router.push("/categories");
         break;
       default:
         router.push("/admin-orders");
@@ -120,7 +119,7 @@ export default function Admin() {
             <ProductListHeading />
             <ScrollView showsVerticalScrollIndicator={false}>
               <View>
-                {productData.map((item, index) => (
+                {products.map((item, index) => (
                   <ProductListItem
                     key={item._id}
                     i={index}

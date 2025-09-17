@@ -1,5 +1,9 @@
 import Header from "@/components/custom/Header";
+import { addCategory, deleteCategory } from "@/redux/actions/otherActions";
+import { AppDispatch } from "@/redux/store";
 import { colors, inputOptions, localStyles, styles } from "@/styles/styles";
+import { useMessageAndErrorOther, useSetCategories } from "@/utils/hooks";
+import { useIsFocused } from "@react-navigation/native";
 import { useState } from "react";
 import {
   ScrollView,
@@ -9,27 +13,41 @@ import {
   View,
 } from "react-native";
 import { Avatar, Button, TextInput } from "react-native-paper";
+import { useDispatch } from "react-redux";
 
-const categories = [
-  {
-    name: "Laptop",
-    id: "123",
-  },
-  {
-    name: "Phone",
-    id: "234",
-  },
-  {
-    name: "Car",
-    id: "345",
-  },
-];
+// const categories = [
+//   {
+//     name: "Laptop",
+//     id: "123",
+//   },
+//   {
+//     name: "Phone",
+//     id: "234",
+//   },
+//   {
+//     name: "Car",
+//     id: "345",
+//   },
+// ];
 
 export default function Categories() {
-  const deleteHandler = (id: string) => {};
   const [category, setCategory] = useState<string>("");
-  const submitHandler = () => {};
-  const loading = false;
+  const [categories, setCategories] = useState<any[]>([]);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const isFocused = useIsFocused();
+  useSetCategories(setCategories, isFocused);
+
+  const loading = useMessageAndErrorOther(dispatch, "admin");
+
+  const deleteHandler = (id: string) => {
+    dispatch(deleteCategory(id));
+  };
+
+  const submitHandler = () => {
+    dispatch(addCategory(category));
+    setCategory("");
+  };
 
   return (
     <>
@@ -51,11 +69,11 @@ export default function Categories() {
               minHeight: 400,
             }}
           >
-            {categories.map((i) => (
+            {categories.map((i, index) => (
               <CategoryCard
-                name={i.name}
-                id={i.id}
-                key={i.id}
+                name={i.category}
+                id={i._id}
+                key={index}
                 deleteHandler={deleteHandler}
               />
             ))}
@@ -78,7 +96,7 @@ export default function Categories() {
             }}
             loading={loading}
             disabled={!category}
-            onPress={submitHandler}
+            onPress={()=>submitHandler()}
           >
             Add
           </Button>

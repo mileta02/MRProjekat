@@ -13,7 +13,36 @@ import {
   placeOrderRequest,
   placeOrderSuccess,
   placeOrderFail,
-  processOrderRequest
+  processOrderRequest,
+  processOrderSuccess,
+  processOrderFail,
+  addCategoryRequest,
+  addCategorySuccess,
+  addCategoryFail,
+  deleteCategoryRequest,
+  deleteCategorySuccess,
+  deleteCategoryFail,
+  addProductRequest,
+  addProductSuccess,
+  addProductFail,
+  updateProductRequest,
+  updateProductSuccess,
+  updateProductFail,
+  updateProductImageRequest,
+  updateProductImageSuccess,
+  updateProductImageFail,
+  deleteProductImageRequest,
+  deleteProductImageSuccess,
+  deleteProductImageFail,
+  deleteProductRequest,
+  deleteProductSuccess,
+  deleteProductFail,
+  forgetPasswordRequest,
+  forgetPasswordSuccess,
+  forgetPasswordFail,
+  resetPasswordRequest,
+  resetPasswordSuccess,
+  resetPasswordFail
 } from "../reducers/otherReducer";
 
 export const updatePassword =
@@ -119,8 +148,192 @@ export const placeOrder =
           withCredentials: true,
         }
       );
-      dispatch(placeOrderSuccess(data.message));
+      dispatch(processOrderSuccess(data.message));
     } catch (error: any) {
-      dispatch(placeOrderFail(error.response?.data?.message || error.message));
+      dispatch(processOrderFail(error.response?.data?.message || error.message));
+    }
+  };
+
+  export const addCategory = (category: string) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(addCategoryRequest());
+  
+      const { data } = await axios.post(
+        `${server}/product/category`,
+  
+        {
+          category,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      dispatch(addCategorySuccess(data.message));
+    } catch (error: any) {
+      dispatch(addCategoryFail(error.response?.data?.message || error.message));
+    }
+  };
+  
+  export const deleteCategory = (id: string) => async (dispatch: AppDispatch) => {
+    console.log(id);
+    try {
+      dispatch(deleteCategoryRequest());
+  
+      const { data } = await axios.delete(
+        `${server}/product/category/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      dispatch(deleteCategorySuccess(data.message));
+    } catch (error: any) {
+      dispatch(deleteCategoryFail(error.response?.data?.message || error.message));
+    }
+  };
+  
+  export const createProduct = (formData: any) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(addProductRequest());
+  
+      const { data } = await axios.post(`${server}/product/new`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+  
+      dispatch(addProductSuccess(data.message));
+    } catch (error: any) {
+      dispatch(addProductFail(error.response?.data?.message || error.message));
+    }
+  };
+  
+  export const updateProduct =
+    (id: string, name: string, description: string, price: number, stock: number, category: string) => async (dispatch: AppDispatch) => {
+      try {
+        dispatch(updateProductRequest());
+        const { data } = await axios.put(
+          `${server}/product/single/${id}`,
+          {
+            name,
+            description,
+            price,
+            stock,
+            category,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+  
+        dispatch(updateProductSuccess(data.message));
+      } catch (error: any) {
+        dispatch(updateProductFail(error.response?.data?.message || error.message));
+      }
+    };
+  
+  export const updateProductImage = (productId: string, formData: any) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(updateProductImageRequest());
+  
+      const { data } = await axios.post(
+        `${server}/product/images/${productId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+  
+      dispatch(updateProductImageSuccess(data.message));
+    } catch (error: any) {
+      dispatch(updateProductImageFail(error.response?.data?.message || error.message));
+    }
+  };
+  
+  export const deleteProductImage = (productId: string, imageId: string) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(deleteProductImageRequest());
+  
+      const { data } = await axios.delete(
+        `${server}/product/images/${productId}?id=${imageId}`,
+        {
+          withCredentials: true,
+        }
+      );
+  
+      dispatch(deleteProductImageSuccess(data.message));
+    } catch (error: any) {
+      dispatch(deleteProductImageFail(error.response?.data?.message || error.message));
+    }
+  };
+  
+  export const deleteProduct = (productId: string) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(deleteProductRequest());
+  
+      const { data } = await axios.delete(
+        `${server}/product/single/${productId}`,
+        {
+          withCredentials: true,
+        }
+      );
+  
+      dispatch(deleteProductSuccess(data.message));
+    } catch (error: any) {
+      dispatch(deleteProductFail(error.response?.data?.message || error.message));
+    }
+  };
+  
+  export const forgetPassword = (email: string) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(forgetPasswordRequest());
+      const { data } = await axios.post(
+        `${server}/user/forgetpassword`,
+        {
+          email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+  
+      dispatch(forgetPasswordSuccess(data.message));
+    } catch (error: any) {
+      dispatch(forgetPasswordFail(error.response?.data?.message || error.message));
+    }
+  };
+  
+  export const resetPassword = (otp: string, password: string) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(resetPasswordRequest());
+      const { data } = await axios.put(
+        `${server}/user/forgetpassword`,
+        {
+          otp,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+  
+      dispatch(resetPasswordSuccess(data.message));
+    } catch (error: any) {
+      dispatch(resetPasswordFail(error.response?.data?.message || error.message));
     }
   };

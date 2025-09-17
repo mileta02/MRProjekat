@@ -16,6 +16,7 @@ import { getAllProducts } from "@/redux/actions/productActions";
 import { useIsFocused } from "@react-navigation/native";
 import { useSetCategories } from "@/utils/hooks";
 import Toast from "react-native-toast-message";
+import { addToCart } from "@/redux/reducers/cartReducer";
 
 
 
@@ -54,22 +55,19 @@ export default function Home() {
     setCategory(id);
   };
 
-  const addToCardHandler = (id: number, name: string, price: number, image: string, stock: number) => {
+  const addToCardHandler = (id: string, name: string, price: number, image: string, stock: number) => {
     if(stock === 0) return Toast.show({
       type:"error",
       text1:"Out of stock.",
     });
-    dispatch({
-      type:"addToCart",
-      payload:{
-        product: id,
-        name, 
-        price, 
-        image, 
-        stock,
-        quantity: 1
-      }
-    });
+    dispatch(addToCart({
+      product: id,
+      name, 
+      price, 
+      image, 
+      stock,
+      quantity: 1
+    }));
 
     Toast.show({
       type:"error",

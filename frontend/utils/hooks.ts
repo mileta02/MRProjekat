@@ -1,11 +1,13 @@
 import { getAdminProducts } from "@/redux/actions/productActions";
 import { clearError, clearMessage } from "@/redux/reducers/userReducer";
+import { clearError as clearOtherError, clearMessage as clearOtherMessage } from "@/redux/reducers/otherReducer";
 import { AppDispatch, RootState, server } from "@/redux/store";
 import axios from "axios";
 import { RelativePathString, router } from "expo-router";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
+import { clearProductError } from "@/redux/reducers/productReducer";
 
 export const useMessageErrorUser = (dispatch: AppDispatch, navigateTo: string = "login") => {
   const { loading, message, error } = useSelector(
@@ -28,16 +30,14 @@ export const useMessageErrorUser = (dispatch: AppDispatch, navigateTo: string = 
       });
       dispatch(clearMessage());
     }
-  }, [error, message, dispatch]);
+  }, [error, message, dispatch, navigateTo]);
 
   return loading;
 };
 
 export const useMessageAndErrorOther = (
   dispatch: AppDispatch,
-  navigation?: any,
   navigateTo?: string,
-  func?: () => any
 ) => {
   const { loading, message, error } = useSelector(
     (state: RootState) => state.other
@@ -49,7 +49,7 @@ export const useMessageAndErrorOther = (
         type: "error",
         text1: error,
       });
-      dispatch(clearError());
+      dispatch(clearOtherError());
     }
 
     if (message) {
@@ -57,11 +57,10 @@ export const useMessageAndErrorOther = (
         type: "success",
         text1: message,
       });
-      dispatch(clearMessage());
-      navigateTo && navigation.navigate(navigateTo);
-      func && dispatch(func());
+      dispatch(clearOtherMessage());
+      navigateTo && router.push(navigateTo as RelativePathString);
     }
-  }, [error, message, dispatch, navigation, navigateTo, func]);
+  }, [error, message, dispatch, navigateTo]);
 
   return loading;
 };
@@ -77,7 +76,7 @@ export const useSetCategories = (setCategories: (categories: any[]) => void, isF
         text1: e.response.data.message
       })
     })
-  },[isFocused])
+  },[isFocused, setCategories])
 }
 
 export const useGetOrders = (isFocused: boolean, isAdmin: boolean = false) => {
@@ -99,7 +98,7 @@ export const useGetOrders = (isFocused: boolean, isAdmin: boolean = false) => {
       setLoading(false);
     })
 
-  },[isFocused])
+  },[isFocused, isAdmin])
 
   return {orders, loading};
 }
@@ -107,7 +106,7 @@ export const useGetOrders = (isFocused: boolean, isAdmin: boolean = false) => {
 export const useAdminProducts = (dispatch: AppDispatch, isFocused: boolean) => {
   const { products, inStock, outOfStock, error, loading } = useSelector(
     (state: RootState) => state.product
-  ) ;
+  );
 
   useEffect(() => {
     if (error) {
@@ -115,13 +114,13 @@ export const useAdminProducts = (dispatch: AppDispatch, isFocused: boolean) => {
         type: "error",
         text1: error,
       });
-      dispatch({
-        type: "clearError",
-      });
+      dispatch(clearProductError());
     }
+  }, [error, dispatch]);
 
+  useEffect(() => {
     dispatch(getAdminProducts());
-  }, [dispatch, isFocused, error]);
+  }, [dispatch, isFocused]);
 
   return {
     products,
@@ -129,4 +128,4 @@ export const useAdminProducts = (dispatch: AppDispatch, isFocused: boolean) => {
     outOfStock,
     loading,
   };
-}
+};
