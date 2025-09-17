@@ -1,8 +1,9 @@
+import { getAdminProducts } from "@/redux/actions/productActions";
 import { clearError, clearMessage } from "@/redux/reducers/userReducer";
 import { AppDispatch, RootState, server } from "@/redux/store";
 import axios from "axios";
 import { RelativePathString, router } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import { useSelector } from "react-redux";
 
@@ -12,7 +13,6 @@ export const useMessageErrorUser = (dispatch: AppDispatch, navigateTo: string = 
   );
 
   useEffect(() => {
-  
     if (error) {
       Toast.show({
         type: "error",
@@ -28,7 +28,7 @@ export const useMessageErrorUser = (dispatch: AppDispatch, navigateTo: string = 
       });
       dispatch(clearMessage());
     }
-  }, [error, message]);
+  }, [error, message, dispatch]);
 
   return loading;
 };
@@ -78,4 +78,55 @@ export const useSetCategories = (setCategories: (categories: any[]) => void, isF
       })
     })
   },[isFocused])
+}
+
+export const useGetOrders = (isFocused: boolean, isAdmin: boolean = false) => {
+  
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    setLoading(true);
+    axios.get(`${server}/order/${isAdmin ? "admin" : "my"}`).then(res=>{
+      setOrders(res.data.orders);
+      setLoading(false);
+    }).catch(e=>{
+      Toast.show({
+        type: "error",
+        text1: e.response.data.message
+      })
+    }).finally(()=>{
+      setLoading(false);
+    })
+
+  },[isFocused])
+
+  return {orders, loading};
+}
+
+export const useAdminProducts = (dispatch: AppDispatch, isFocused: boolean) => {
+  const { products, inStock, outOfStock, error, loading } = useSelector(
+    (state: RootState) => state.product
+  ) ;
+
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: error,
+      });
+      dispatch({
+        type: "clearError",
+      });
+    }
+
+    dispatch(getAdminProducts());
+  }, [dispatch, isFocused, error]);
+
+  return {
+    products,
+    inStock,
+    outOfStock,
+    loading,
+  };
 }

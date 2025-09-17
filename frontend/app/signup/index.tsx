@@ -14,6 +14,7 @@ import { Avatar, Button, TextInput } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { useMessageErrorUser } from "@/utils/hooks";
+import { register } from "@/redux/actions/userActions";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -29,12 +30,10 @@ export default function Signup() {
     !name || !email || !password || !address || !city || !country || !pinCode;
 
   const dispatch = useDispatch<AppDispatch>();
-
   const loading = useMessageErrorUser(dispatch, "profile");
 
   const submitHandler = () => {
     const myForm = new FormData();
-
     myForm.append("name", name);
     myForm.append("email", email);
     myForm.append("password", password);
@@ -50,6 +49,7 @@ export default function Signup() {
         name: avatar.split("/").pop(),
       } as any);
     }
+    dispatch(register(myForm));
   };
 
   const { imageParam } = useLocalSearchParams();
@@ -60,6 +60,7 @@ export default function Signup() {
       setImage(imageParam as string);
     }
   }, [imageParam]);
+
   return (
     <>
       <View style={{ ...styles.defaultStyle }}>
@@ -80,21 +81,26 @@ export default function Signup() {
           }}
           contentContainerStyle={{ paddingBottom: 50 }}
         >
-          <View style={{ justifyContent: "center" }}>
+          <View style={{ justifyContent: "center"}}>
             {image ? (
               <Avatar.Image
                 size={80}
-                style={{ backgroundColor: colors.color1 }}
+                style={{ backgroundColor: colors.color1, marginHorizontal: "auto" }}
                 source={{ uri: image }}
               />
             ) : (
               <Avatar.Icon
                 icon="image"
                 size={80}
-                style={{ backgroundColor: colors.color2 }}
+                style={{ backgroundColor: colors.color2, marginHorizontal: "auto" }}
               />
             )}
-            <TouchableOpacity onPress={() => router.push("/camera")}>
+            <TouchableOpacity onPress={() => router.push({
+              pathname: "/camera",
+              params: {
+                alias: "signup",
+              },
+            })}>
               <Button textColor={colors.color1}>Change Photo</Button>
             </TouchableOpacity>
             <View style={{ justifyContent: "center" }}>
@@ -152,7 +158,7 @@ export default function Signup() {
                 textColor={colors.color2}
                 disabled={disableBtn}
                 style={styles.btn}
-                onPress={submitHandler}
+                onPress={()=>submitHandler()}
               >
                 Sign Up
               </Button>

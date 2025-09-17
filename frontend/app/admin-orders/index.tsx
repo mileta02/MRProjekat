@@ -2,17 +2,41 @@ import Header from "@/components/custom/Header";
 import Loader from "@/components/custom/Loader";
 import { colors, localStyles, styles } from "@/styles/styles";
 import { ScrollView, Text, View } from "react-native";
-import { orders } from "../orders";
+// import { orders } from "../orders";
 import OrderItem from "@/components/custom/OrderItem";
 import { Headline } from "react-native-paper";
+import { useIsFocused } from "@react-navigation/native";
+import { useGetOrders, useMessageErrorUser } from "@/utils/hooks";
+import { useDispatch } from "react-redux";
+import { processOrder } from "@/redux/actions/otherActions";
+import { AppDispatch } from "@/redux/store";
+
+export type OrderType = {
+    _id: string;
+    totalAmount: number;
+    orderStatus: string;
+    paymentMethod: string;
+    createdAt: string;
+    shippingInfo: ShippingInfoType;
+}
+export type ShippingInfoType = {
+    address: string;
+    city: string;
+    country: string;
+    pinCode: number;
+}
 
 export default function AdminOrders() {
+  const dispatch = useDispatch<AppDispatch>();
 
-    const loading = false;
-    const processOrderLoading = true;
-    const updateHandler = () => {
-
+    const processOrderLoading = useMessageErrorUser(dispatch, "admin");
+    const updateHandler = (id: string) => {
+      dispatch(processOrder(id));
     }
+    const isFocused = useIsFocused();
+    const {orders, loading} = useGetOrders(isFocused, true) as {orders: OrderType[], loading: boolean};
+
+
 
   return (
     <>

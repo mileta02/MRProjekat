@@ -3,10 +3,14 @@ import Chart from "@/components/custom/Chart";
 import Header from "@/components/custom/Header";
 import Loader from "@/components/custom/Loader";
 import ProductListItem from "@/components/custom/ProductListItem";
+import { AppDispatch } from "@/redux/store";
 import { colors, localStyles, styles } from "@/styles/styles";
 import { productData } from "@/types/types";
+import { useAdminProducts } from "@/utils/hooks";
+import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useDispatch } from "react-redux";
 
 const ProductListHeading = () => {
   return (
@@ -40,7 +44,6 @@ const adminStyles = StyleSheet.create({
 });
 
 export default function Admin() {
-  const loading = false;
   const navigationHandler = (text: string) => {
     switch (text) {
       case "Product":
@@ -57,6 +60,10 @@ export default function Admin() {
         break;
     }
   };
+
+  const dispatch = useDispatch<AppDispatch>();
+  const isFocused = useIsFocused();
+  const { products, inStock, outOfStock, loading } = useAdminProducts(dispatch, isFocused);
 
   const productNavigate = (id: string) => {
     router.push(`/products/${id}`)

@@ -2,14 +2,13 @@ import Footer from "@/components/custom/Footer";
 import Header from "@/components/custom/Header";
 import Heading from "@/components/custom/Heading";
 import ProductCard from "@/app/products/ProductCard";
-import SearchModal, { NavigationProp } from "@/components/custom/SearchModal";
+import SearchModal from "@/components/custom/SearchModal";
 import { ThemedView } from "@/components/ThemedView";
 import { colors, styles } from "@/styles/styles";
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Avatar, Button } from "react-native-paper";
-import { productData, ProductType } from "@/types/types";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUser } from "@/redux/actions/userActions";
 import { AppDispatch, RootState } from "@/redux/store";
@@ -50,10 +49,7 @@ export default function Home() {
 
   const {isAuthenticated, loading} = useSelector((state: RootState) => state.user);
   const {products, loading: productLoading} = useSelector((state: RootState) => state.product);
-
-  console.log("Res:",isAuthenticated, loading)
-
-  const categoryButtonHangler = (id: string) => {
+  const categoryButtonHandler = (id: string) => {
     setCategory(id);
   };
 
@@ -65,15 +61,19 @@ export default function Home() {
 
   useEffect(()=>{
     if(!loading && !isAuthenticated){
-      router.replace("/login");
+      setTimeout(()=>{
+        router.push("/login");
+      },100)
+    }else{
+      dispatch(loadUser());
     }
-    dispatch(loadUser())
+    dispatch(getAllProducts("",""));
   },[])
 
   useEffect(()=>{
     const timeOut = setTimeout(()=>{
       dispatch(getAllProducts(searchQuery, category));
-    },1000)
+    },300)
     return () => clearTimeout(timeOut);
   },[searchQuery, category, isFocused,dispatch])
 
@@ -139,7 +139,7 @@ export default function Home() {
                     borderRadius: 100,
                     margin: 5,
                   }}
-                  onPress={() => categoryButtonHangler(item._id)}
+                  onPress={() => categoryButtonHandler(item._id)}
                 >
                   <Text
                     style={{

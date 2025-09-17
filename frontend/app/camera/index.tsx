@@ -17,7 +17,6 @@ export default function CameraComponent() {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    console.log("Result", permissionResult.granted);
     if (permissionResult.granted === false)
       return alert("Permission to access gallery required");
 

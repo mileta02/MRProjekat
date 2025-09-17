@@ -12,7 +12,8 @@ import {
   updatePicFail,
   placeOrderRequest,
   placeOrderSuccess,
-  placeOrderFail
+  placeOrderFail,
+  processOrderRequest
 } from "../reducers/otherReducer";
 
 export const updatePassword =
@@ -97,6 +98,27 @@ export const placeOrder =
         }
       );
 
+      dispatch(placeOrderSuccess(data.message));
+    } catch (error: any) {
+      dispatch(placeOrderFail(error.response?.data?.message || error.message));
+    }
+  };
+
+  export const processOrder =
+  (id: string) => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(processOrderRequest());
+
+      const { data } = await axios.put(
+        `${server}/order/single/${id}`,
+        { 
+          
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
       dispatch(placeOrderSuccess(data.message));
     } catch (error: any) {
       dispatch(placeOrderFail(error.response?.data?.message || error.message));

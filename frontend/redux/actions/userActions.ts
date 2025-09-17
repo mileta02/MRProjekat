@@ -40,7 +40,6 @@ export const login =
 export const logout = () => async (dispatch: AppDispatch) => {
   try {
     dispatch(logoutRequest());
-
     const { data } = await axios.get(`${server}/user/logout`, {
       withCredentials: true,
     });
@@ -57,7 +56,9 @@ export const loadUser = () => async (dispatch: AppDispatch) => {
     const { data } = await axios.get(`${server}/user/myProfile`, {
       withCredentials: true,
     });
-    dispatch(loadUserSuccess(data.user));
+    if(data.user){
+      dispatch(loadUserSuccess(data.user));
+    }
   } catch (error: any) {
     dispatch(loadUserFail(error.response.data.message));
   }
@@ -66,8 +67,7 @@ export const loadUser = () => async (dispatch: AppDispatch) => {
 export const register = (formData: any) => async (dispatch: AppDispatch) => {
   try {
     dispatch(registerRequest());
-
-    const { data } = await axios.post(`${server}/user/new`, formData, {
+    const { data } = await axios.post(`${server}/user/register`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

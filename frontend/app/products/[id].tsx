@@ -13,7 +13,6 @@ import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
 import { Avatar, Button } from "react-native-paper";
 import Toast from "react-native-toast-message";
-import { productData, ProductType } from "@/types/types";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
@@ -46,7 +45,6 @@ export default function ProductDetails() {
   // const product: ProductType = productData.find((x) => x._id === id)!;
 
   const [quantity, setQuantity] = useState(0);
-
   const progress = useSharedValue(0);
   const isCarousel = useRef(null);
 
@@ -63,6 +61,11 @@ export default function ProductDetails() {
   };
 
   const increment = (stock: number) => {
+    if(stock <= quantity) return Toast.show({
+        type: "error",
+        text1: "Out Of Stock",
+        text2: ""
+    });
     if (stock > quantity) {
       setQuantity((prev) => prev + 1);
     }
@@ -79,9 +82,10 @@ export default function ProductDetails() {
 
   const {product, loading} = useSelector((state: RootState) => state.product);
 
+console.log("product", product);
   useEffect(()=>{
     dispatch(getProductDetails(id));
-  },[dispatch, id])
+  },[])
 
   return (
     <View

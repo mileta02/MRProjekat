@@ -19,6 +19,17 @@ export const otherSlice = createSlice({
     updatePasswordRequest(state) {
       state.loading = true;
     },
+    processOrderRequest(state) {
+      state.loading = true;
+    },
+    processOrderSuccess(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    processOrderFail(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
     updateProfileRequest(state) {
       state.loading = true;
     },
@@ -83,7 +94,10 @@ export const {
   updatePicSuccess,
   placeOrderRequest,
   placeOrderSuccess,
-  placeOrderFail
+  placeOrderFail,
+  processOrderRequest,
+  processOrderSuccess,
+  processOrderFail
 } = otherSlice.actions;
 
 export const otherReducer = otherSlice.reducer;

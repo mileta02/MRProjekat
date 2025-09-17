@@ -13,10 +13,10 @@ import { useDispatch, useSelector } from "react-redux";
 import mime, { Mime } from "mime";
 import { updatePic } from "@/redux/actions/otherActions";
 import { useIsFocused } from "@react-navigation/native";
-export default function Profile( {navigation, route} : any) {
+export default function Profile() {
 
-
-  const { user } = useSelector((state:any) => state.user);
+  const { imageParam } = useLocalSearchParams();
+  const { user, isAuthenticated } = useSelector((state:any) => state.user);
   const [avatar, setAvatar] = useState("");
 
   const isFocused = useIsFocused();
@@ -44,6 +44,7 @@ export default function Profile( {navigation, route} : any) {
         router.push("/change-password");
         break;
       case "Sign Out":
+        router.push("/login");
         logoutHandler();
         break;
       default:
@@ -51,13 +52,12 @@ export default function Profile( {navigation, route} : any) {
     }
   };
 
-  const { imageParam } = useLocalSearchParams();
-  const [image, setImage] = useState("");
-
-
-  const loadingPic = useMessageAndErrorOther(dispatch, null, undefined, loadUser);
+  const loadingPic = useMessageAndErrorOther(dispatch, null, undefined);
 
   useEffect(() => {
+    if(!isAuthenticated){
+      router.push("/login");
+    }
     if (imageParam) {
       setAvatar(imageParam as string);
       // dispatch updatePic Here
@@ -67,19 +67,16 @@ export default function Profile( {navigation, route} : any) {
         type: mime.getType(imageParam as string) || "image/jpeg",
         name: (imageParam as string).split("/").pop(),
       } as any);
-      console.log("myForm", myForm);
       dispatch(updatePic(myForm));
     }
-  }, [imageParam,dispatch]);
-
-
-  useEffect(() => {
     dispatch(loadUser());
-  }, []);
+  }, [imageParam,dispatch,isFocused,isAuthenticated]);
 
   useEffect(() => {
     setAvatar(user?.avatar?user.avatar.url : null);
   }, [user]);
+
+  console.log("user", user);
 
   return (
     <>
@@ -88,7 +85,7 @@ export default function Profile( {navigation, route} : any) {
           <Text style={localStyles.heading}>Profile</Text>
         </View>
 
-        {loading ? (
+        {loading || !user ? (
           <Loader />
         ) : (
           <>

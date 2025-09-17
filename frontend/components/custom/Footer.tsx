@@ -1,4 +1,4 @@
-import { RootState } from "@/redux/store";
+import {  RootState } from "@/redux/store";
 import { colors } from "@/styles/styles";
 import { router } from "expo-router";
 import { View, TouchableOpacity } from "react-native";
@@ -12,6 +12,7 @@ type FooterProps = {
 export default function Footer({ activeRoute = "home" }: FooterProps) {
 
   const {loading, isAuthenticated} = useSelector((state: RootState)=> state.user)
+
 
   const navigationHandler = (key: number) => {
     switch (key) {
@@ -40,7 +41,8 @@ export default function Footer({ activeRoute = "home" }: FooterProps) {
   };
 
   return (
-    loading === false && (
+    (loading === false && isAuthenticated === true)
+    && (
       <View
         style={{
           backgroundColor: colors.color1,

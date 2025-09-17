@@ -80,7 +80,7 @@ export const userSlice = createSlice({
     },
     registerSuccess(state, action: PayloadAction<string>) {
       state.loading = false;
-      state.isAuthenticated = true;
+      state.isAuthenticated = false;
       state.message = action.payload;
       state.error = null;
     },

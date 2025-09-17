@@ -47,7 +47,7 @@ export const getProductDetails = (id: string) => async (dispatch: AppDispatch) =
   try {
     dispatch(getProductDetailsRequest());
 
-    const { data } = await axios.get(`${server}/product/single/${id}`, {
+    const { data } = await axios.get(`${server}/product/${id}`, {
       withCredentials: true,
     });
 

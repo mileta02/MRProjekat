@@ -1,6 +1,6 @@
 import Footer from "@/components/custom/Footer";
 import { login } from "@/redux/actions/userActions";
-import { AppDispatch, server } from "@/redux/store";
+import { AppDispatch} from "@/redux/store";
 import { colors, styles } from "@/styles/styles";
 import { useMessageErrorUser } from "@/utils/hooks";
 import { router } from "expo-router";
@@ -14,7 +14,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch<AppDispatch>();
-
   const loading = useMessageErrorUser(dispatch, "profile");
 
   const submitHandler = () => {
@@ -54,7 +53,7 @@ export default function Login() {
             <Text style={styles.forgotPassword}>Forgot Password?</Text>
           </TouchableOpacity>
           <Button
-            onPress={submitHandler}
+            onPress={()=>submitHandler()}
             loading={loading}
             style={styles.btn}
             textColor={colors.color2}
