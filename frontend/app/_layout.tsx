@@ -4,16 +4,14 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Slot, Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { Slot} from "expo-router";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { Provider, useDispatch } from "react-redux";
-import { AppDispatch, store } from "@/redux/store";
-import { useEffect } from "react";
-import { loadUser } from "@/redux/actions/userActions";
+import { Provider } from "react-redux";
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { store } from "@/redux/store";
 
 
 export default function RootLayout() {
@@ -28,10 +26,14 @@ export default function RootLayout() {
     return null;
   }
 
+  const stripeKey =
+  "pk_test_51LyelkSAVdOdLf5gfOn61Erm7ZujAA4BsYpEzsaA2HKX8zLdQx32yLxX3ztd5bumqZuMT0WiWwZA7CJIeVtmgAal00yq5buYGi";
+
   
 
   return (
     <Provider store={store}>
+      <StripeProvider publishableKey={stripeKey}>
       <SafeAreaView style={{ flex: 1 }}>
         <ThemeProvider
           value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
@@ -40,6 +42,7 @@ export default function RootLayout() {
           <Toast position="top" topOffset={20} />
         </ThemeProvider>
       </SafeAreaView>
+      </StripeProvider>
     </Provider>
   );
 }

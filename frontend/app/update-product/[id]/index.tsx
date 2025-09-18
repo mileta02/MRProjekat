@@ -1,47 +1,65 @@
 import Header from "@/components/custom/Header";
 import Loader from "@/components/custom/Loader";
 import SelectComponent from "@/components/custom/SelectComponent";
+import { updateProduct } from "@/redux/actions/otherActions";
+import { getProductDetails } from "@/redux/actions/productActions";
+import { AppDispatch, RootState } from "@/redux/store";
 import {
   colors,
   inputOptions,
-  inputStyling,
   localStyles,
   styles,
 } from "@/styles/styles";
-import { ProductType } from "@/types/types";
-import { router } from "expo-router";
-import { useState } from "react";
+import { useMessageAndErrorOther, useSetCategories } from "@/utils/hooks";
+import { useIsFocused } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function UpdateProduct(id: string) {
-  const loading = false;
+export default function UpdateProduct() {
+  const { id } = useLocalSearchParams();
+  const productId = id as string;
+
+  const isFocused = useIsFocused();
+  const dispatch = useDispatch<AppDispatch>();
+
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
+  const [price, setPrice] = useState<number>(0);
+  const [stock, setStock] = useState<number>(0);
+  const [categories, setCategories] = useState<any[]>([]);
   const [category, setCategory] = useState("Test");
   const [categoryId, setCategoryId] = useState("");
-  const [categories, setCategories] = useState([
-    {
-      _id: "1",
-      category: "Laptop",
-    },
-    {
-      _id: "2",
-      category: "Phone",
-    },
-    {
-      _id: "3",
-      category: "Car",
-    },
-  ]);
   const [visible, setVisible] = useState(false);
-const [product, setProduct] = useState<ProductType>();
-  const loadingOther = false;
-  const submitHandler = () => {
 
+  const {product, loading} = useSelector((state: RootState) => state.product);
+  useSetCategories(setCategories, isFocused);
+
+  const submitHandler = () => {
+    dispatch(updateProduct(productId, name, description, price, stock, categoryId));
   };
+
+  const loadingOther = useMessageAndErrorOther(dispatch, "admin");
+
+  useEffect(() => {
+    if (productId) {
+      dispatch(getProductDetails(productId));
+    }
+  }, [dispatch, productId]);
+
+  useEffect(() => {
+    if(product) {
+      setName(product.name);
+      setDescription(product.description);
+      setPrice(product.price);
+      setStock(product.stock);
+      setCategory(product.category);
+      setCategoryId(product.categoryId);
+    }
+  }, [product]);
 
   return (
     <>
@@ -77,13 +95,19 @@ const [product, setProduct] = useState<ProductType>();
                   router.push({
                     pathname: "/product-images/[id]",
                     params: {
-                      id: String(id),
+                      id: productId,
                       images: encodeURIComponent(
                         JSON.stringify(product?.images ?? [])
                       ),
                     },
                   })
                 }
+                style={{
+                  margin: 20,
+                  padding: 6,
+                  borderColor: colors.color1,
+                  borderWidth: 1,
+                }}
                 textColor={colors.color1}
               >
                 Manage Images
@@ -104,14 +128,14 @@ const [product, setProduct] = useState<ProductType>();
                 style={{ ...inputOptions }}
                 keyboardType="number-pad"
                 placeholder="Price"
-                value={price}
-                onChangeText={setPrice}
+              value={price.toString()}
+                onChangeText={(text) => setPrice(Number(text))}
               />
               <TextInput
                 style={{ ...inputOptions }}
                 placeholder="Stock"
-                value={stock}
-                onChangeText={setStock}
+                value={stock.toString()}
+                onChangeText={(text) => setStock(Number(text))}
               />
               <Text
                 style={{
@@ -132,7 +156,7 @@ const [product, setProduct] = useState<ProductType>();
                   margin: 20,
                   padding: 6,
                 }}
-                onPress={() => submitHandler}
+                onPress={submitHandler}
                 loading={loadingOther}
                 disabled={loadingOther}
               >

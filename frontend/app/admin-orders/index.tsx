@@ -6,7 +6,7 @@ import { ScrollView, Text, View } from "react-native";
 import OrderItem from "@/components/custom/OrderItem";
 import { Headline } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
-import { useGetOrders, useMessageErrorUser } from "@/utils/hooks";
+import { useGetOrders, useMessageAndErrorOther, useMessageErrorUser } from "@/utils/hooks";
 import { useDispatch } from "react-redux";
 import { processOrder } from "@/redux/actions/otherActions";
 import { AppDispatch } from "@/redux/store";
@@ -29,7 +29,7 @@ export type ShippingInfoType = {
 export default function AdminOrders() {
   const dispatch = useDispatch<AppDispatch>();
 
-    const processOrderLoading = useMessageErrorUser(dispatch, "admin");
+    const processOrderLoading = useMessageAndErrorOther(dispatch, "admin");
     const updateHandler = (id: string) => {
       dispatch(processOrder(id));
     }

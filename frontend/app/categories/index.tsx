@@ -73,7 +73,7 @@ export default function Categories() {
               <CategoryCard
                 name={i.category}
                 id={i._id}
-                key={index}
+                key={i._id}
                 deleteHandler={deleteHandler}
               />
             ))}

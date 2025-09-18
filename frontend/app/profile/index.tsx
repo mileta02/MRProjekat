@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import mime, { Mime } from "mime";
 import { updatePic } from "@/redux/actions/otherActions";
 import { useIsFocused } from "@react-navigation/native";
+import { Image } from "expo-image";
 export default function Profile() {
 
   const { imageParam } = useLocalSearchParams();
@@ -62,11 +63,12 @@ export default function Profile() {
       setAvatar(imageParam as string);
       // dispatch updatePic Here
       const myForm = new FormData();
-      myForm.append("file", {
+      const fileData = {
         uri: imageParam as string,
         type: mime.getType(imageParam as string) || "image/jpeg",
         name: (imageParam as string).split("/").pop(),
-      } as any);
+      };
+      myForm.append("file", fileData as any);
       dispatch(updatePic(myForm));
     }
     dispatch(loadUser());
@@ -89,11 +91,11 @@ export default function Profile() {
           <>
             <View style={profileStyles.container}>
               {avatar ? (
-                <Avatar.Image
-                  size={80}
-                  style={{ backgroundColor: colors.color1 }}
-                  source={{ uri: avatar }}
-                />
+                <Image
+                style={{ backgroundColor: colors.color1, width: 80, height: 80, borderRadius: 40 }}
+                source={{ uri: decodeURIComponent(decodeURIComponent(avatar as string)) }}
+                contentFit="cover"
+              />
               ) : (
                 <Avatar.Icon
                   icon="image"

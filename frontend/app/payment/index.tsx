@@ -11,7 +11,9 @@ import axios from "axios";
 import { AppDispatch, RootState, server } from "@/redux/store";
 import Loader from "@/components/custom/Loader";
 import { router, useLocalSearchParams } from "expo-router";
-// import { clearCart } from "@/redux/reducers/cartReducer"; // Used in useMessageAndErrorOther
+import { useStripe } from "@stripe/stripe-react-native";
+import Toast from "react-native-toast-message";
+import { clearCart } from "@/redux/reducers/cartReducer";
 
 const Payment: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState("COD");
@@ -19,14 +21,15 @@ const Payment: React.FC = () => {
   const params = useLocalSearchParams();
 
   const dispatch = useDispatch<AppDispatch>();
-
   const { isAuthenticated, user } = useSelector((state: RootState) => state.user);
   const { cartItems } = useSelector((state: RootState) => state.cart);
+
+  const stripe = useStripe();
 
   const redirectToLogin = () => {
     router.push("/login");
   };
-  
+
   const codHandler = (paymentInfo?: any) => {
     const shippingInfo = {
       address: user.address,
@@ -35,10 +38,10 @@ const Payment: React.FC = () => {
       pinCode: user.pinCode,
     };
 
-    const itemsPrice = params.itemsPrice ? Number(params.itemsPrice) : 0;
-    const shippingCharges = params.shippingCharges ? Number(params.shippingCharges) : 0;
+    const itemsPrice = params.subtotal ? Number(params.subtotal) : 0;
+    const shippingCharges = params.shipping ? Number(params.shipping) : 0;
     const taxPrice = params.tax ? Number(params.tax) : 0;
-    const totalAmount = params.totalAmount ? Number(params.totalAmount) : 0;
+    const totalAmount = params.total ? Number(params.total) : 0;
 
     dispatch(
       placeOrder(
@@ -53,59 +56,57 @@ const Payment: React.FC = () => {
       )
     );
   };
-  
+
   const onlineHandler = async () => {
     try {
+      setLoaderLoading(true);
+
       const {
         data: { client_secret },
       } = await axios.post(
         `${server}/order/payment`,
-        {
-          totalAmount: params.totalAmount,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
+        { totalAmount: params.totalAmount },
+        { headers: { "Content-Type": "application/json" }, withCredentials: true }
       );
 
-      // Stripe integration would go here
-      console.log("Online payment client_secret:", client_secret);
-      // For now, just call codHandler with mock payment info
-      codHandler({ id: "mock_payment_id", status: "Succeeded" });
-      
+      const init = await stripe.initPaymentSheet({
+        paymentIntentClientSecret: client_secret,
+        merchantDisplayName: "",
+      });
+
+      if (init.error) {
+        setLoaderLoading(false);
+        return Toast.show({ type: "error", text1: init.error.message });
+      }
+
+      const present = await stripe.presentPaymentSheet();
+
+      if (present.error) {
+        setLoaderLoading(false);
+        return Toast.show({ type: "error", text1: present.error.message });
+      }
+
+      // Payment succeeded
+      codHandler({ id: client_secret, status: "Succeeded" });
+      setLoaderLoading(false);
     } catch (error: any) {
       console.error("Payment error:", error);
       setLoaderLoading(false);
+      Toast.show({ type: "error", text1: "Payment failed. Try again." });
     }
   };
 
-  const loading = useMessageAndErrorOther(
-    dispatch,
-    null,
-    "profile",
-    () => ({ type: "cart/clearCart" })
-  );
+  const loading = useMessageAndErrorOther(dispatch, "profile", () => clearCart());
+
   return loaderLoading ? (
     <Loader />
   ) : (
     <View style={styles.defaultStyle}>
       <Header back={true} emptyCart={false} />
-      <Heading
-        containerStyle={{
-          paddingTop: 70,
-        }}
-        text1="Payment"
-        text2="Method"
-      />
+      <Heading containerStyle={{ paddingTop: 70 }} text1="Payment" text2="Method" />
 
       <View style={localStyles.container}>
-        <RadioButton.Group
-          onValueChange={setPaymentMethod}
-          value={paymentMethod}
-        >
+        <RadioButton.Group onValueChange={setPaymentMethod} value={paymentMethod}>
           <View style={localStyles.radioStyle}>
             <Text style={localStyles.radioStyleText}>Cash On Delivery</Text>
             <RadioButton color={colors.color1} value={"COD"} />
@@ -132,9 +133,7 @@ const Payment: React.FC = () => {
           disabled={loading}
           style={localStyles.btn}
           textColor={colors.color2}
-          icon={
-            paymentMethod === "COD" ? "check-circle" : "circle-multiple-outline"
-          }
+          icon={paymentMethod === "COD" ? "check-circle" : "circle-multiple-outline"}
         >
           {paymentMethod === "COD" ? "Place Order" : "Pay"}
         </Button>
@@ -152,7 +151,6 @@ const localStyles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
-
   radioStyle: {
     flexDirection: "row",
     alignItems: "center",

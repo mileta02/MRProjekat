@@ -33,7 +33,7 @@ export const getAdminProducts = () => async (dispatch: AppDispatch) => {
   try {
     dispatch(getAdminProductsRequest());
     
-    const { data } = await axios.get(`${server}/product/admin`, {
+    const { data } = await axios.get(`${server}/product/adminProducts`, {
       withCredentials: true,
     });
 

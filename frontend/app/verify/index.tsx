@@ -1,16 +1,24 @@
 import Footer from "@/components/custom/Footer";
+import { resetPassword } from "@/redux/actions/otherActions";
+import { AppDispatch } from "@/redux/store";
 import { colors, inputOptions, styles } from "@/styles/styles";
+import { useMessageAndErrorOther } from "@/utils/hooks";
 import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Button } from "react-native-paper";
+import { useDispatch } from "react-redux";
 
 export default function Verify() {
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
-  const loading = false;
 
-  const submitHandler = () => {};
+  const dispatch = useDispatch<AppDispatch>();
+  const loading = useMessageAndErrorOther(dispatch, "login");
+
+  const submitHandler = () => {
+    dispatch(resetPassword(otp, password));
+  };
 
   return (
     <>
@@ -43,7 +51,7 @@ export default function Verify() {
             textColor={colors.color2}
             disabled={otp === "" || password === ""}
             style={styles.btn}
-            onPress={submitHandler}
+            onPress={()=>submitHandler()}
           >
             Reset
           </Button>

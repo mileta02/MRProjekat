@@ -46,15 +46,18 @@ export default function ProductListItem({
           }}
         >
           <Image
-            source={{
-              uri: imgSrc,
-            }}
-            style={{
-              width: 40,
-              height: 40,
-              resizeMode: "contain",
-            }}
-          />
+  source={
+    imgSrc && imgSrc.length > 0
+      ? { uri: imgSrc }            // remote ili file URI
+      : require("../../assets/images/fallback.png") // lokalna statička slika
+  }
+  style={{
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
+  }}
+/>
+
           <Text
             style={{
               width: 60,

@@ -1,50 +1,58 @@
 import Header from "@/components/custom/Header";
 import ImageCard from "@/components/custom/ImageCard";
+import { AppDispatch, RootState } from "@/redux/store";
 import { colors, localStyles, styles } from "@/styles/styles";
+import { useMessageAndErrorOther } from "@/utils/hooks";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import { Avatar, Button } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import mime from "mime";
+import { deleteProductImage, updateProductImage } from "@/redux/actions/otherActions";
+import { getFallbackImageSource } from "@/utils/imageUtils";
 
 export default function ProductImages() {
-  const loading: boolean = false;
-  const { productId } = useLocalSearchParams();
-  //   const { images } = useLocalSearchParams();
-  //   const parsedImages = images
-  //     ? JSON.parse(decodeURIComponent(images as string))
-  //     : [];
 
-  const images = [
-    {
-      url: "https://picsum.photos/400/300",
-      _id: "123"
-    },
-    {
-      url: "https://picsum.photos/401/300",
-      _id: "124"
-    },
-    {
-      url: "https://picsum.photos/402/300",
-      _id: "125"
-    },
-  ];
-
+  const {product} = useSelector((state: RootState) => state.product);
+  const [images, setImages] = useState<ImageType[]>(product.images);
   const [image, setImage] = useState("");
   const [imageChanged, setImageChanged] = useState(false);
 
-  const submitHandler = () => {};
+  const dispatch = useDispatch<AppDispatch>();
 
-  const deleteHandler = (id: string) => {};
+  const loading = useMessageAndErrorOther(dispatch, "admin");
+
+  const submitHandler = () => {
+    const myForm = new FormData();
+    const fileData = {
+      uri: image,
+      type: mime.getType(image) || "image/jpeg",
+      name: image.split("/").pop(),
+    };
+    myForm.append("file", fileData as any);
+    dispatch(updateProductImage(product._id as string, myForm));
+  };
+
+  const deleteHandler = (id: string) => {
+    dispatch(deleteProductImage(product._id as string, id));
+  };
 
   type ImageType = {
     _id: string;
     url: string;
   };
+
   const { imageParam } = useLocalSearchParams();
 
   useEffect(() => {
-      if (imageParam) setImage(imageParam as string);
-    }, [imageParam]);
+    if (imageParam) {
+      const imageUri = imageParam as string;
+      setImage(imageUri);
+    }
+    setImageChanged(true);
+  }, [imageParam]);
 
   return (
     <>
@@ -70,14 +78,18 @@ export default function ProductImages() {
               minHeight: 400,
             }}
           >
-            {images.map((i: ImageType) => (
+            {images ? images.map((i: ImageType) => (
               <ImageCard
                 key={i._id}
                 src={i.url}
                 id={i._id}
                 deleteHandler={deleteHandler}
               />
-            ))}
+            )) : <Avatar.Icon
+            icon="image"
+            size={80}
+            style={{ backgroundColor: colors.color2 }}
+          />}
           </View>
         </ScrollView>
         <View
@@ -87,16 +99,19 @@ export default function ProductImages() {
             backgroundColor: colors.color3,
           }}
         >
-          <Image
-            style={{
-              backgroundColor: colors.color2,
-              width: 100,
-              height: 100,
-              alignSelf: "center",
-              resizeMode: "contain",
-            }}
-            source={{ uri: undefined }}
-          />
+          {image ? (
+                  <Image
+                    style={{ backgroundColor: colors.color1, width: 80, height: 80, marginHorizontal: "auto" }}
+                    source={getFallbackImageSource(decodeURIComponent(decodeURIComponent(image as string)))}
+                    contentFit="cover"
+                  />
+                ) : (
+                  <Avatar.Icon
+                    icon="image"
+                    size={80}
+                    style={{ backgroundColor: colors.color2, marginHorizontal: "auto" }}
+                  />
+                )}
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => router.push({
@@ -112,6 +127,7 @@ export default function ProductImages() {
               style={{
                 backgroundColor: colors.color2,
                 margin: 10,
+                marginHorizontal: "auto"
               }}
               color={colors.color3}
             />

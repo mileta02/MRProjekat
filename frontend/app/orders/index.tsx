@@ -2,55 +2,59 @@ import Header from "@/components/custom/Header";
 import Loader from "@/components/custom/Loader";
 import OrderItem from "@/components/custom/OrderItem";
 import { colors, localStyles, styles } from "@/styles/styles";
+import { useGetOrders } from "@/utils/hooks";
+import { useIsFocused } from "@react-navigation/native";
 import { ScrollView, Text, View } from "react-native";
 import { Headline } from "react-native-paper";
+import { OrderType } from "../admin-orders";
 
-export const orders = [
-    {
-      _id: "Sample",
-      shippingInfo: {
-        address: "Sample 12",
-        city: "Belgrade",
-        country: "Serbia",
-        pinCode: 12345,
-      },
-      createdAt: "12-12-2022",
-      orderStatus: "Processing",
-      paymentMethod: "COD",
-      totalAmount: 2000,
-    },
-    {
-      _id: "Sample 2",
-      shippingInfo: {
-        address: "Sample 12",
-        city: "Belgrade",
-        country: "Serbia",
-        pinCode: 12345,
-      },
-      createdAt: "12-12-2022",
-      orderStatus: "Processing",
-      paymentMethod: "COD",
-      totalAmount: 2000,
-    },
-    {
-      _id: "Sample 3",
-      shippingInfo: {
-        address: "Sample 12",
-        city: "Belgrade",
-        country: "Serbia",
-        pinCode: 12345,
-      },
-      createdAt: "12-12-2022",
-      orderStatus: "Processing",
-      paymentMethod: "COD",
-      totalAmount: 2000,
-    },
-  ];
+// export const orders = [
+//     {
+//       _id: "Sample",
+//       shippingInfo: {
+//         address: "Sample 12",
+//         city: "Belgrade",
+//         country: "Serbia",
+//         pinCode: 12345,
+//       },
+//       createdAt: "12-12-2022",
+//       orderStatus: "Processing",
+//       paymentMethod: "COD",
+//       totalAmount: 2000,
+//     },
+//     {
+//       _id: "Sample 2",
+//       shippingInfo: {
+//         address: "Sample 12",
+//         city: "Belgrade",
+//         country: "Serbia",
+//         pinCode: 12345,
+//       },
+//       createdAt: "12-12-2022",
+//       orderStatus: "Processing",
+//       paymentMethod: "COD",
+//       totalAmount: 2000,
+//     },
+//     {
+//       _id: "Sample 3",
+//       shippingInfo: {
+//         address: "Sample 12",
+//         city: "Belgrade",
+//         country: "Serbia",
+//         pinCode: 12345,
+//       },
+//       createdAt: "12-12-2022",
+//       orderStatus: "Processing",
+//       paymentMethod: "COD",
+//       totalAmount: 2000,
+//     },
+//   ];
 
 export default function Orders() {
   const handler = () => {};
-  const loading = false;
-  
+  const isFocused = useIsFocused();
+  const {orders, loading} = useGetOrders(isFocused) as {orders: OrderType[], loading: boolean};
+  console.log(orders);
 
   return (
     <>

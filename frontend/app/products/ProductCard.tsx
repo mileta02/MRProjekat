@@ -1,16 +1,16 @@
 import { Image, TouchableOpacity, View, Text } from "react-native"
-import { NavigationProp } from "../../components/custom/SearchModal"
 import { colors } from "@/styles/styles"
 import { Button } from "react-native-paper"
 import { useRouter } from "expo-router"
+import { getFallbackImageSource } from "@/utils/imageUtils"
 
 export type ProductCardProps = {
     stock: number,
     name: string,
     price: number,
     image: string,
-    id: number,
-    addToCardHandler: (id: number, name: string, price: number, image: string, stock: number) => void,
+    id: string,
+    addToCardHandler: (id: string, name: string, price: number, image: string, stock: number) => void,
     index: number
 }
 
@@ -21,8 +21,8 @@ export default function ProductCard({stock, name, price, image, id, addToCardHan
     return(
        <TouchableOpacity activeOpacity={1} onPress={()=> router.push(`/products/${id}`)}>
             <View style = {{
-                elevation: 15,
-                width: 250,
+                elevation: 5,
+                width: 220,
                 alignItems:  "center",
                 justifyContent: "space-between",
                 margin: 20,
@@ -32,10 +32,7 @@ export default function ProductCard({stock, name, price, image, id, addToCardHan
 
             }}>
                 <Image
-                    source={{
-                        uri: image,
-
-                    }}
+                    source={getFallbackImageSource(image)}
                     style={{
                         width: "100%",
                         height: 200,
@@ -54,8 +51,7 @@ export default function ProductCard({stock, name, price, image, id, addToCardHan
                     <Text numberOfLines= {2} style = {{
                         color: index % 2 === 0 ? colors.color2 : colors.color3,
                         fontSize: 25,
-                        fontWeight: "300",
-                        width: "60%"
+                        fontWeight: "300"
                     }}>{name}</Text>
                      <Text numberOfLines= {2} style = {{
                         color: index % 2 === 0 ? colors.color2 : colors.color3,
@@ -68,8 +64,7 @@ export default function ProductCard({stock, name, price, image, id, addToCardHan
                     borderRadius: 0,
                     borderBottomRightRadius: 20,
                     borderBottomLeftRadius: 20,
-                    width: "100%",
-                    paddingVertical: 5
+                    width: "100%"
                 }}>
                     <Button  textColor={index % 2 === 0 ? colors.color1 : colors.color2} onPress={()=> addToCardHandler(id, name, price, image, stock)}>
                         Add To Cart

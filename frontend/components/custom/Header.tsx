@@ -1,3 +1,4 @@
+import { clearCart } from "@/redux/reducers/cartReducer";
 import { AppDispatch } from "@/redux/store";
 import { colors } from "@/styles/styles";
 import { RootStackParamList } from "@/types/types";
@@ -16,9 +17,7 @@ const Header = ({ back, emptyCart }: { back: boolean; emptyCart: boolean }) => {
 
   const dispatch = useDispatch<AppDispatch>();
   const emptyCartHandler = () => {
-    dispatch({
-      type:"clearCart",
-    })
+    dispatch(clearCart())
   };
 
 

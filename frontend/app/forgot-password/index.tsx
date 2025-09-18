@@ -1,17 +1,22 @@
 import Footer from "@/components/custom/Footer";
+import { forgetPassword } from "@/redux/actions/otherActions";
+import { AppDispatch } from "@/redux/store";
 import { colors, styles } from "@/styles/styles";
+import { useMessageAndErrorOther } from "@/utils/hooks";
 import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { useDispatch } from "react-redux";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
 
-  const loading = false;
+  const loading = useMessageAndErrorOther(dispatch, "verify");
 
   const submitHandler = () =>{
-    router.push("/verify");
+    dispatch(forgetPassword(email));
   }
 
   return (

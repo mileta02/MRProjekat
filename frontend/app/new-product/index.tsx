@@ -1,21 +1,26 @@
 import Header from "@/components/custom/Header";
 import Loader from "@/components/custom/Loader";
 import SelectComponent from "@/components/custom/SelectComponent";
+import { createProduct } from "@/redux/actions/otherActions";
+import { AppDispatch } from "@/redux/store";
 import {
   colors,
   inputOptions,
-  inputStyling,
   localStyles,
   styles,
 } from "@/styles/styles";
+import { useMessageAndErrorOther, useSetCategories } from "@/utils/hooks";
+import { useIsFocused } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar, Button, TextInput } from "react-native-paper";
+import { useDispatch } from "react-redux";
+import mime from "mime";
+import { Image } from "expo-image";
+import { getFallbackImageSource } from "@/utils/imageUtils";
 
 export default function NewProduct() {
-  const loading = false;
-  const id: string = "";
   const [image, setImage] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -23,29 +28,47 @@ export default function NewProduct() {
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("Test");
   const [categoryId, setCategoryId] = useState("");
-  const [categories, setCategories] = useState([
-    {
-      _id: "1",
-      category: "Laptop",
-    },
-    {
-      _id: "2",
-      category: "Phone",
-    },
-    {
-      _id: "3",
-      category: "Car",
-    },
-  ]);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  const isFocused = useIsFocused();
+  const dispatch = useDispatch<AppDispatch>();
   const [visible, setVisible] = useState(false);
   const { imageParam } = useLocalSearchParams();
+  const loading = useMessageAndErrorOther(dispatch, "admin");
+
+  
+  useSetCategories(setCategories, isFocused);
+
+  const diasableBtn = !name || !description || !price || !stock || !image;;
+
 
   useEffect(() => {
-    if (imageParam) setImage(imageParam as string);
+    if (imageParam) {
+      const imageUri = imageParam as string;
+      setImage(imageUri);
+    }
   }, [imageParam]);
 
-  const loadingOther = false;
-  const submitHandler = () => {};
+  const submitHandler = () => {
+    const myForm = new FormData();
+    myForm.append("name", name);
+    myForm.append("description", description);
+    myForm.append("price", price);
+    myForm.append("stock", stock);
+    
+    const fileData = {
+      uri: image,
+      type: mime.getType(image) || "image/jpeg",
+      name: image.split("/").pop(),
+    };
+    
+    console.log("File data:", fileData);
+    myForm.append("file", fileData as any);
+
+    if(categoryId) myForm.append("category", categoryId);
+
+    dispatch(createProduct(myForm));
+  };
 
   return (
     <>
@@ -85,10 +108,10 @@ export default function NewProduct() {
                 }}
               >
                {image ? (
-                  <Avatar.Image
-                    size={80}
-                    style={{ backgroundColor: colors.color1 }}
-                    source={{ uri: image }}
+                  <Image
+                    style={{ backgroundColor: colors.color1, width: 80, height: 80, borderRadius: 40 }}
+                    source={getFallbackImageSource(decodeURIComponent(decodeURIComponent(image as string)))}
+                    contentFit="cover"
                   />
                 ) : (
                   <Avatar.Icon
@@ -103,6 +126,7 @@ export default function NewProduct() {
                       pathname: "/camera",
                       params: {
                         alias: "newProduct",
+                        updateProfile: "true",
                       },
                     })
                   }
@@ -119,12 +143,12 @@ export default function NewProduct() {
                   />
                 </TouchableOpacity>
               </View>
-              <Button
+              {/* <Button
                 onPress={() => router.push(`/product-images/${id}`)}
                 textColor={colors.color1}
               >
                 Manage Images
-              </Button>
+              </Button> */}
               <TextInput
                 style={{ ...inputOptions }}
                 placeholder="Name"
@@ -169,9 +193,9 @@ export default function NewProduct() {
                   margin: 20,
                   padding: 6,
                 }}
-                onPress={() => submitHandler}
+                onPress={submitHandler}
                 loading={loading}
-                disabled={loading}
+                disabled={diasableBtn || loading}
               >
                 Create
               </Button>

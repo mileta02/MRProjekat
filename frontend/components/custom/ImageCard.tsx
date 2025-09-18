@@ -2,6 +2,7 @@ import { colors } from "@/styles/styles";
 import { Image } from "expo-image";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-paper";
+import { getFallbackImageSource } from "@/utils/imageUtils";
 
 type ImageCardProps = {
   src: string;
@@ -13,9 +14,7 @@ export default function ImageCard(props: ImageCardProps) {
   return (
     <View style={imageCardStyles.container}>
       <Image
-        source={{
-          uri: props.src,
-        }}
+        source={getFallbackImageSource(props.src)}
         style={{
           width: "100%",
           height: "80%",

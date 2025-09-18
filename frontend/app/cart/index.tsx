@@ -6,10 +6,10 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Button } from "react-native-paper";
 import CartItem from "./CartItem";
 import { router } from "expo-router";
-import { cartItems } from "@/data/data";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Toast from "react-native-toast-message";
+import { addToCart, removeFromCart } from "@/redux/reducers/cartReducer";
 
 export default function Cart() {
 
@@ -24,37 +24,28 @@ export default function Cart() {
         text1: "Maximum value reached."
       });
     }
-    dispatch({
-      type:"addToCart",
-      payload:{
-        product:id,
-        name, 
-        price, 
-        image,
-        stock,
-        quantity: newQuantity, 
-      },
-    });
+    dispatch(addToCart({
+      product:id,
+      name, 
+      price, 
+      image,
+      stock,
+      quantity: newQuantity, 
+    }));
   }
   const decrementHandler = (id: string, name: string, price: number, image: string, stock: number, quantity: number) => {
     const newQuantity = quantity - 1;
     if(1 >= quantity) {
-      return dispatch({
-        type:"removeFromCart",
-        payload:id
-      });
+      return dispatch(removeFromCart(id));
     }
-    dispatch({
-      type:"addToCart",
-      payload:{
-        product:id,
-        name, 
-        price, 
-        image,
-        stock,
-        quantity: newQuantity, 
-      },
-    });
+    dispatch(addToCart({
+      product:id,
+      name, 
+      price, 
+      image,
+      stock,
+      quantity: newQuantity, 
+    }));
   }
 
   const handleNavigate = (id: string) => {

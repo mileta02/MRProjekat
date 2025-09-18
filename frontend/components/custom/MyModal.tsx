@@ -12,6 +12,8 @@ type MyModalProps = {
 };
 
 export default function MyModal(props: MyModalProps) {
+
+  console.log(props);
   return (
     <View style={modalStyles.container}>
       <TouchableOpacity

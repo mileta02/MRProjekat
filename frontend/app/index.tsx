@@ -108,11 +108,9 @@ export default function Home() {
         />
       )}
       <ThemedView style={[styles.defaultStyle, { flex: 1 }]}>
-        <Header back={false} emptyCart={false} />
-
         <View
           style={{
-            paddingTop: 70,
+            paddingTop: 10,
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
@@ -123,13 +121,14 @@ export default function Home() {
               flexDirection: "column",
               alignItems: "flex-start",
               marginBottom: 30,
+              marginTop: 20
             }}
           />
 
           <TouchableOpacity onPress={() => setActiveSearch((prev) => !prev)}>
             <Avatar.Icon
               icon={"magnify"}
-              size={50}
+              size={60}
               color={"gray"}
               style={{
                 backgroundColor: colors.color2,
@@ -191,7 +190,7 @@ export default function Home() {
           </ScrollView>
         </View>
       </ThemedView>
-      <Footer />
+      <Footer  />
     </>
   );
 }

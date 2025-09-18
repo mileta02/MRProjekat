@@ -1,11 +1,14 @@
 import ButtonBox from "@/components/custom/ButtonBox";
 import Chart from "@/components/custom/Chart";
+import Footer from "@/components/custom/Footer";
 import Header from "@/components/custom/Header";
 import Loader from "@/components/custom/Loader";
 import ProductListItem from "@/components/custom/ProductListItem";
+import { deleteProduct } from "@/redux/actions/otherActions";
+import { getAdminProducts } from "@/redux/actions/productActions";
 import { AppDispatch } from "@/redux/store";
 import { colors, localStyles, styles } from "@/styles/styles";
-import { useAdminProducts } from "@/utils/hooks";
+import { useAdminProducts, useMessageAndErrorOther, useMessageErrorUser } from "@/utils/hooks";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -68,7 +71,11 @@ export default function Admin() {
     router.push(`/products/${id}`)
   }
 
-  const deleteHandler = () => {};
+  const deleteHandler = (id: string) => {
+    dispatch(deleteProduct(id));
+  };
+
+  const loadingDelete = useMessageAndErrorOther(dispatch, "admin", getAdminProducts);
 
   return (
     <>
@@ -88,7 +95,7 @@ export default function Admin() {
                 alignItems: "center",
               }}
             >
-              <Chart inStock={12} outOfStock={2} />
+              <Chart inStock={inStock} outOfStock={outOfStock} />
             </View>
             <View>
               <View
@@ -119,7 +126,7 @@ export default function Admin() {
             <ProductListHeading />
             <ScrollView showsVerticalScrollIndicator={false}>
               <View>
-                {products.map((item, index) => (
+                {!loadingDelete && products.map((item, index) => (
                   <ProductListItem
                     key={item._id}
                     i={index}
@@ -127,10 +134,10 @@ export default function Admin() {
                     price={item.price}
                     stock={item.stock}
                     name={item.name}
-                    category={item.category}
-                    imgSrc={item.images[0].url}
+                    category={item.category?.category || "No Category"}
+                    imgSrc={item.images?.[0]?.url || ""}
                     navigate={() => productNavigate(item._id)}
-                    deleteProduct={deleteHandler}
+                    deleteProduct={()=> deleteHandler(item._id)}
                   />
                 ))}
               </View>
@@ -138,6 +145,7 @@ export default function Admin() {
           </>
         )}
       </View>
+      <Footer/>
     </>
   );
 }

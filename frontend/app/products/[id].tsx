@@ -17,6 +17,8 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import { getProductDetails } from "@/redux/actions/productActions";
+import { addToCart } from "@/redux/reducers/cartReducer";
+import { getFallbackImageSource } from "@/utils/imageUtils";
 
 const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = SLIDER_WIDTH;
@@ -28,17 +30,6 @@ const iconOptions = {
   width: 25,
 };
 
-// const images = [
-//   {
-//     id: "1",
-//     url: "https://picsum.photos/400/300",
-//   },
-//   {
-//     id: "2",
-//     url: "https://picsum.photos/401/300",
-//   },
-// ];
-
 export default function ProductDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
@@ -47,6 +38,7 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState(0);
   const progress = useSharedValue(0);
   const isCarousel = useRef(null);
+  const {name, price, images} = useSelector((state: RootState) => state.product.product);
 
   const addToCardHandler = (stock: number) => {
     if(stock === 0) return Toast.show({
@@ -54,6 +46,14 @@ export default function ProductDetails() {
         text1: "Out Of Stock",
         text2: ""
     });
+    dispatch(addToCart({
+      product: id,
+      name,
+      price,
+      image: images[0].url,
+      stock, 
+      quantity
+    }));
     Toast.show({
         type: "success",
         text1: "Added To Cart"
@@ -67,12 +67,14 @@ export default function ProductDetails() {
         text2: ""
     });
     if (stock > quantity) {
+      setStock(stock - 1);
       setQuantity((prev) => prev + 1);
     }
   };
 
-  const decrement = () => {
+  const decrement = (stock: number) => {
     if (quantity > 0) {
+      setStock(stock + 1);
       setQuantity((prev) => prev - 1);
     }
   };
@@ -81,6 +83,8 @@ export default function ProductDetails() {
   const isFocused = useIsFocused();
 
   const {product, loading} = useSelector((state: RootState) => state.product);
+
+  const [stock, setStock] = useState(product.stock);
 
 
   useEffect(()=>{
@@ -112,7 +116,7 @@ export default function ProductDetails() {
             }}
           >
             <Image
-              source={{ uri: (item as { url: string }).url }}
+              source={getFallbackImageSource((item as { url: string }).url)}
               style={{
                 width: ITEM_WIDTH,
                 height: 300,
@@ -181,7 +185,7 @@ export default function ProductDetails() {
               alignItems: "center",
             }}
           >
-            <TouchableOpacity onPress={() => decrement()}>
+            <TouchableOpacity onPress={() => decrement(product.stock)}>
               <Avatar.Icon
                 icon={"minus"}
                 size={20}
@@ -212,7 +216,7 @@ export default function ProductDetails() {
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity activeOpacity={0.9} onPress={() => addToCardHandler(product.stock)}>
+        <TouchableOpacity activeOpacity={0.9} onPress={() => addToCardHandler(stock)}>
           <Button
             textColor={colors.color2}
             style={{

@@ -92,9 +92,9 @@ export const updatePassword =
       `${server}/user/updateProfilePicture`,
       formData,
       {
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
         withCredentials: true,
       }
     );
@@ -139,7 +139,7 @@ export const placeOrder =
       dispatch(processOrderRequest());
 
       const { data } = await axios.put(
-        `${server}/order/single/${id}`,
+        `${server}/order/${id}`,
         { 
           
         },
@@ -198,6 +198,7 @@ export const placeOrder =
     try {
       dispatch(addProductRequest());
   
+      console.log("formData", formData.get("file"));
       const { data } = await axios.post(`${server}/product/new`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -216,7 +217,7 @@ export const placeOrder =
       try {
         dispatch(updateProductRequest());
         const { data } = await axios.put(
-          `${server}/product/single/${id}`,
+          `${server}/product/${id}`,
           {
             name,
             description,
@@ -281,7 +282,7 @@ export const placeOrder =
       dispatch(deleteProductRequest());
   
       const { data } = await axios.delete(
-        `${server}/product/single/${productId}`,
+        `${server}/product/${productId}`,
         {
           withCredentials: true,
         }

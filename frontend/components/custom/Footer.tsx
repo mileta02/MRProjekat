@@ -1,6 +1,6 @@
 import {  RootState } from "@/redux/store";
 import { colors } from "@/styles/styles";
-import { router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import { View, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-paper";
 import { useSelector } from "react-redux";
@@ -12,7 +12,7 @@ type FooterProps = {
 export default function Footer({ activeRoute = "home" }: FooterProps) {
 
   const {loading, isAuthenticated} = useSelector((state: RootState)=> state.user)
-
+  const pathname = usePathname();
 
   const navigationHandler = (key: number) => {
     switch (key) {
@@ -41,7 +41,7 @@ export default function Footer({ activeRoute = "home" }: FooterProps) {
   };
 
   return (
-    (loading === false && isAuthenticated === true)
+    (loading === false && isAuthenticated === true && pathname !== "/login")
     && (
       <View
         style={{

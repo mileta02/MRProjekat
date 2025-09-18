@@ -8,7 +8,7 @@ export const processPayment = asyncErrorCatcher(async(req,res,next)=>{
     const {totalAmount} = req.body;
 
     const {client_secret} = await stripe.paymentIntents.create({
-        amount: totalAmount,
+        amount: Math.round(totalAmount * 100),
         currency:"eur"
     });
     

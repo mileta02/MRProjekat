@@ -132,7 +132,12 @@ export default function SearchModal({
               paddingHorizontal: 10,
             }}
           >
-            {products.map((i) => (
+                        {products
+              .filter((product) => 
+                product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                product.description?.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+              .map((i) => (
               <SearchItem
                 key={i._id}
                 imgSrc={i.images[0]?.url}

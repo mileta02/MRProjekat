@@ -38,6 +38,7 @@ export const useMessageErrorUser = (dispatch: AppDispatch, navigateTo: string = 
 export const useMessageAndErrorOther = (
   dispatch: AppDispatch,
   navigateTo?: string,
+  functionToCall?: any
 ) => {
   const { loading, message, error } = useSelector(
     (state: RootState) => state.other
@@ -59,6 +60,7 @@ export const useMessageAndErrorOther = (
       });
       dispatch(clearOtherMessage());
       navigateTo && router.push(navigateTo as RelativePathString);
+      functionToCall && dispatch(functionToCall());
     }
   }, [error, message, dispatch, navigateTo]);
 
@@ -110,10 +112,10 @@ export const useAdminProducts = (dispatch: AppDispatch, isFocused: boolean) => {
 
   useEffect(() => {
     if (error) {
-      Toast.show({
-        type: "error",
-        text1: error,
-      });
+      // Toast.show({
+      //   type: "error",
+      //   text1: error,
+      // });
       dispatch(clearProductError());
     }
   }, [error, dispatch]);

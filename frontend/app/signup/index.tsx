@@ -42,13 +42,12 @@ export default function Signup() {
     myForm.append("country", country);
     myForm.append("pinCode", pinCode);
 
-    if (avatar !== "") {
-      myForm.append("file", {
-        uri: avatar,
-        type: mime.getType(avatar) || "image/jpeg",
-        name: avatar.split("/").pop(),
-      } as any);
-    }
+    const fileData = {
+      uri: image,
+      type: mime.getType(image) || "image/jpeg",
+      name: image.split("/").pop(),
+    };
+    myForm.append("file", fileData as any);
     dispatch(register(myForm));
   };
 
